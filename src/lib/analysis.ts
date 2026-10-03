@@ -10,10 +10,10 @@ const PATTERNS: { type: FindingType; category: FindingCategory; label: string; r
     sensitivity: 75,
     openness: 80,
     impact: 70,
-    description: "Faylda telefon raqami aniqlandi.",
-    riskExplanation: "Telefon raqami ism va universitet ma'lumoti bilan birgalikda shaxsni aniqlashni osonlashtirishi mumkin.",
-    recommendation: "Telefon raqamini yashirish yoki qisman maskalash (masalan, +998 ** *** ** 45) tavsiya etiladi.",
-    protectionAction: "Telefon raqamini maskalash",
+    description: "Faylingizda telefon raqamingiz ko'rinib turibdi.",
+    riskExplanation: "Telefon raqami o'z-alone kam xavf tug'diradi. Lekin agar u ism va universitet ma'lumoti bilan birga bo'lsa, sizni topishni ancha osonlashtiradi.",
+    recommendation: "Ulashishdan oldin telefon raqamingizni yashirishni tavsiya qilamiz. Masalan, +998 ** *** ** 45 ko'rinishida.",
+    protectionAction: "Telefon raqamini yashirish",
   },
   {
     type: 'email',
@@ -23,10 +23,10 @@ const PATTERNS: { type: FindingType; category: FindingCategory; label: string; r
     sensitivity: 70,
     openness: 85,
     impact: 65,
-    description: "Faylda elektron pochta manzili aniqlandi.",
-    riskExplanation: "Email manzili sizning identifikatsiyangiz bo'lib xizmat qilishi va boshqa ma'lumotlar bilan bog'lanishi mumkin.",
-    recommendation: "Email manzilini maskalash (masalan, z***@gmail.com) tavsiya etiladi.",
-    protectionAction: "Email manzilini maskalash",
+    description: "Faylingizda elektron pochta manzilingiz ko'rinib turibdi.",
+    riskExplanation: "Email manzili sizning shaxsingizni aniqlash uchun ishlatilishi mumkin. Agar u boshqa ma'lumotlar bilan birga bo'lsa, bu yanada oson bo'ladi.",
+    recommendation: "Email manzilingizni qisman yashirishni tavsiya qilamiz. Masalan, z***@gmail.com ko'rinishida.",
+    protectionAction: "Email manzilini yashirish",
   },
   {
     type: 'jshshir',
@@ -36,10 +36,10 @@ const PATTERNS: { type: FindingType; category: FindingCategory; label: string; r
     sensitivity: 98,
     openness: 90,
     impact: 95,
-    description: "Faylda JShShIR (shaxsiy raqam) aniqlandi.",
-    riskExplanation: "JShShIR shaxsni noyob tarzda aniqlaydi va uning oshkor bo'lishi o'zlikni o'g'irlash xavfini yaratadi.",
-    recommendation: "JShShIRni fayldan butunlay olib tashlash tavsiya etiladi.",
-    protectionAction: "JShShIRni olib tashlash",
+    description: "Faylingizda JShShIR (shaxsiy raqamingiz) bor. Bu juda sezgir ma'lumot.",
+    riskExplanation: "JShShIR sizni butunlay noyob tarzda aniqlaydi. Agar bu raqam begona qo'liga o'tib qolsa, siz nomidan turib turli xizmatlardan foydalanish mumkin.",
+    recommendation: "Bu raqamni fayldan butunlay olib tashlashni qat'iy tavsiya qilamiz.",
+    protectionAction: "JShShIR raqamini olib tashlash",
   },
   {
     type: 'iban',
@@ -49,10 +49,10 @@ const PATTERNS: { type: FindingType; category: FindingCategory; label: string; r
     sensitivity: 92,
     openness: 75,
     impact: 90,
-    description: "Faylda bank IBAN raqami aniqlandi.",
-    riskExplanation: "IBAN raqami moliyaviy ma'lumotlarga kirish imkonini berishi mumkin.",
-    recommendation: "IBAN raqamini fayldan olib tashlash tavsiya etiladi.",
-    protectionAction: "IBAN raqamini olib tashlash",
+    description: "Faylingizda bank hisobingiz raqami (IBAN) ko'rinib turibdi.",
+    riskExplanation: "Bank raqami moliyaviy ma'lumotlaringizga kirish imkonini berishi mumkin. Buni ulashish juda xavfli.",
+    recommendation: "Bank raqamini fayldan butunlay olib tashlashni qat'iy tavsiya qilamiz.",
+    protectionAction: "Bank raqamini olib tashlash",
   },
   {
     type: 'parol',
@@ -62,9 +62,9 @@ const PATTERNS: { type: FindingType; category: FindingCategory; label: string; r
     sensitivity: 99,
     openness: 60,
     impact: 98,
-    description: "Faylda parol yoki kalit so'z aniqlandi.",
-    riskExplanation: "Parolning oshkor bo'lishi hisoblarga noqonuniy kirishni ta'minlashi mumkin.",
-    recommendation: "Parolni fayldan darhol olib tashlash tavsiya etiladi.",
+    description: "Faylingizda parol yoki kalit so'z bor. Bu juda xavfli.",
+    riskExplanation: "Agar parol begona qo'liga o'tsa, sizning hisoblaringizga kirib olish mumkin.",
+    recommendation: "Parolni fayldan darhol olib tashlashni qat'iy tavsiya qilamiz.",
     protectionAction: "Parolni olib tashlash",
   },
   {
@@ -75,10 +75,10 @@ const PATTERNS: { type: FindingType; category: FindingCategory; label: string; r
     sensitivity: 65,
     openness: 70,
     impact: 60,
-    description: "Faylda tug'ilgan sana aniqlandi.",
-    riskExplanation: "Tug'ilgan sana ism bilan birgalikda shaxsni aniqlashda ishlatilishi mumkin.",
-    recommendation: "Tug'ilgan sanani yashirish tavsiya etiladi.",
-    protectionAction: "Sanani yashirish",
+    description: "Faylingizda tug'ilgan sanangiz ko'rinib turibdi.",
+    riskExplanation: "Tug'ilgan sana o'z-alone katta xavf emas, lekin ism bilan birgalikda sizni aniqlashda ishlatilishi mumkin.",
+    recommendation: "Tug'ilgan sanani yashirishni tavsiya qilamiz.",
+    protectionAction: "Tug'ilgan sanani yashirish",
   },
 ];
 
@@ -108,13 +108,13 @@ export function detectFileType(file: File): 'rasm' | 'pdf' | 'hujjat' | 'noma-lu
 export function getAnalysisModules(fileType: 'rasm' | 'pdf' | 'hujjat' | 'noma-lum'): string[] {
   switch (fileType) {
     case 'rasm':
-      return ['OCR', 'QR-KOD', 'METADATA', 'MAXFIYLIK TAHLILI'];
+      return ['Rasm ichidagi matn', 'QR-kod', 'Qo\'shimcha ma\'lumotlar', 'Maxfiylik tahlili'];
     case 'pdf':
-      return ['MATN', 'METADATA', 'SEZGIR MA\'LUMOTLAR', 'MAXFIYLIK TAHLILI'];
+      return ['Matn', 'Qo\'shimcha ma\'lumotlar', 'Sezgir ma\'lumotlar', 'Maxfiylik tahlili'];
     case 'hujjat':
-      return ['MATN', 'SEZGIR MA\'LUMOTLAR', 'METADATA'];
+      return ['Matn', 'Sezgir ma\'lumotlar', 'Qo\'shimcha ma\'lumotlar'];
     default:
-      return ['MATN', 'METADATA', 'MAXFIYLIK TAHLILI'];
+      return ['Matn', 'Qo\'shimcha ma\'lumotlar', 'Maxfiylik tahlili'];
   }
 }
 
@@ -183,16 +183,16 @@ function extractMetadata(file: File): Finding[] {
     id: 'meta-device',
     type: 'metadata',
     category: 'raqamli-kirish',
-    label: 'Qurilma metadata',
-    value: `${file.type || 'noma-lum'} | ${file.size} bytes | ${lastModified.toISOString().split('T')[0]}`,
-    location: 'Fayl metadata maydonlari',
+    label: 'Fayl ichidagi qo\'shimcha ma\'lumotlar',
+    value: `${file.type || 'noma-lum'} | ${file.size} bayt | ${lastModified.toISOString().split('T')[0]}`,
+    location: 'Fayl ichida saqlanib qolgan qo\'shimcha maydonlar',
     sensitivity: 45,
     openness: 60,
     impact: 40,
-    description: "Fayl metadataida qurilma va sana ma'lumotlari aniqlandi.",
-    riskExplanation: "Metadata faylning qaysi qurilmada, qachon yaratilganini oshkor qilishi mumkin.",
-    recommendation: "Metadata tozalash tavsiya etiladi.",
-    protectionAction: "Metadata tozalash",
+    description: "Fayl ichida qurilma va sana haqida qo'shimcha ma'lumotlar saqlanib qolgan.",
+    riskExplanation: "Bu qo'shimcha ma'lumotlar fayl qaysi qurilmada va qachon yaratilganini oshkor qilishi mumkin.",
+    recommendation: "Ulashishdan oldin bu qo'shimcha ma'lumotlarni tozalashni tavsiya qilamiz.",
+    protectionAction: "Qo'shimcha ma'lumotlarni tozalash",
   });
 
   if (file.type.startsWith('image/')) {
@@ -200,16 +200,16 @@ function extractMetadata(file: File): Finding[] {
       id: 'meta-gps',
       type: 'metadata',
       category: 'joylashuv',
-      label: 'GPS joylashuv metadata',
+      label: 'Joylashuv ma\'lumoti',
       value: '41.2995° N, 69.2401° E (Toshkent)',
-      location: 'EXIF GPS maydoni',
+      location: 'Rasm ichida saqlanib qolgan joylashuv ma\'lumoti',
       sensitivity: 80,
       openness: 70,
       impact: 75,
-      description: "Rasm EXIF ma'lumotlarida GPS koordinatalari aniqlandi.",
-      riskExplanation: "GPS koordinatalari sizning aniq joylashuvingizni oshkor qilishi mumkin.",
-      recommendation: "EXIF GPS ma'lumotlarini olib tashlash tavsiya etiladi.",
-      protectionAction: "GPS metadata olib tashlash",
+      description: "Rasmingiz ichida sizning aniq joylashuvingiz haqida ma'lumot saqlanib qolgan.",
+      riskExplanation: "Bu ma'lumot siz qayerda ekanligingizni begonalarga oshkor qilishi mumkin.",
+      recommendation: "Ulashishdan oldin rasmdagi joylashuv ma'lumotini olib tashlashni tavsiya qilamiz.",
+      protectionAction: "Joylashuv ma'lumotini olib tashlash",
     });
   }
 
@@ -236,13 +236,13 @@ function detectQRCode(fileType: string): Finding[] {
     category: 'raqamli-kirish',
     label: 'QR-kod',
     value: content,
-    location: 'Rasm markazida QR-kod aniqlandi',
+    location: 'Rasmning markazida QR-kod topildi',
     sensitivity: 85,
     openness: 95,
     impact: 80,
-    description: "Faylda QR-kod aniqlandi.",
-    riskExplanation: "QR-kod qo'shimcha ma'lumotlarga olib borishi mumkin. Shu sababli faylni ulashishdan oldin QR-kodni tekshirish tavsiya etiladi.",
-    recommendation: "QR-kodni olib tashlash yoki blur qilish tavsiya etiladi.",
+    description: "Faylingizda QR-kod bor.",
+    riskExplanation: "QR-kod qo'shimcha ma'lumotlarga olib borishi mumkin. Agar bu kod sizning shaxsiy sahifangizga bog'langan bo'lsa, begona odam siz haqingizda ko'proq ma'lumot olishi mumkin.",
+    recommendation: "Ulashishdan oldin QR-kodni olib tashlashni yoki xiralashtirishni tavsiya qilamiz.",
     protectionAction: "QR-kodni olib tashlash",
   }];
 }
@@ -265,13 +265,13 @@ function detectNamesInText(text: string): Finding[] {
       category: 'shaxs',
       label: 'To\'liq ism',
       value: fullName,
-      location: 'Matn tarkibida',
+      location: 'Fayl ichidagi matnda',
       sensitivity: 55,
       openness: 75,
       impact: 50,
-      description: `Faylda to'liq ism aniqlandi: ${fullName}`,
-      riskExplanation: "Ism boshqa ma'lumotlar bilan birgalikda shaxsni aniqlashda ishlatilishi mumkin.",
-      recommendation: "Ismni qisqartirish (masalan, faqat bosh harflar) tavsiya etiladi.",
+      description: `Faylingizda to'liq ism ko'rinib turibdi: ${fullName}`,
+      riskExplanation: "Ism o'z-alone katta xavf emas. Lekin agar u telefon raqami yoki universitet bilan birga bo'lsa, sizni aniqlash ancha oson bo'ladi.",
+      recommendation: "Ismni qisqartirishni tavsiya qilamiz. Masalan, faqat bosh harflarni qoldiring.",
       protectionAction: "Ismni qisqartirish",
     });
     break; // Only detect one name
@@ -287,15 +287,15 @@ function detectOrganizations(text: string): Finding[] {
         id: `org-${uni}`,
         type: 'universitet',
         category: 'tashkilot',
-        label: 'Universitet / Tashkilot',
+        label: 'Universitet yoki tashkilot',
         value: uni,
-        location: 'Matn tarkibida',
+        location: 'Fayl ichidagi matnda',
         sensitivity: 50,
         openness: 65,
         impact: 45,
-        description: `Faylda tashkilot nomi aniqlandi: ${uni}`,
-        riskExplanation: "Universitet ma'lumoti ism va telefon bilan birgalikda shaxs haqida to'liqroq profilni ochib berishi mumkin.",
-        recommendation: "Tashkilot nomini umumlashtirish (masalan, 'universitet') tavsiya etiladi.",
+        description: `Faylingizda tashkilot nomi ko'rinib turibdi: ${uni}`,
+        riskExplanation: "Universitet ma'lumoti o'z-alone xavfli emas. Lekin agar u ism va telefon bilan birga bo'lsa, siz haqingizda to'liqroq ma'lumot olish mumkin.",
+        recommendation: "Tashkilot nomini umumlashtirishni tavsiya qilamiz. Masalan, 'universitet' deb yozing.",
         protectionAction: "Tashkilot nomini umumlashtirish",
       });
       break;
@@ -309,13 +309,13 @@ function detectOrganizations(text: string): Finding[] {
         category: 'tashkilot',
         label: 'Ish joyi',
         value: wp,
-        location: 'Matn tarkibida',
+        location: 'Fayl ichidagi matnda',
         sensitivity: 55,
         openness: 65,
         impact: 50,
-        description: `Faylda ish joyi aniqlandi: ${wp}`,
-        riskExplanation: "Ish joyi ma'lumoti shaxsni aniqlashni osonlashtirishi mumkin.",
-        recommendation: "Ish joyi nomini umumlashtirish tavsiya etiladi.",
+        description: `Faylingizda ish joyingiz nomi ko'rinib turibdi: ${wp}`,
+        riskExplanation: "Ish joyi ma'lumoti sizni aniqlashni osonlashtirishi mumkin.",
+        recommendation: "Ish joyi nomini umumlashtirishni tavsiya qilamiz.",
         protectionAction: "Ish joyini umumlashtirish",
       });
       break;
@@ -398,7 +398,7 @@ export async function analyzeFile(file: File, fileId: string): Promise<AnalysisR
           category: pattern.category,
           label: pattern.label,
           value: match.trim(),
-          location: 'Matn tarkibida',
+          location: 'Fayl ichidagi matnda',
           sensitivity: pattern.sensitivity,
           openness: pattern.openness,
           impact: pattern.impact,
@@ -435,10 +435,10 @@ export async function analyzeFile(file: File, fileId: string): Promise<AnalysisR
   const risk = calculateRisk(uniqueFindings, relationships);
 
   const detectedTypeLabel: Record<string, string> = {
-    'rasm': 'RASM (JPEG/PNG)',
-    'pdf': 'PDF HUJJAT',
-    'hujjat': 'MATN HUJJATI (DOCX/TXT)',
-    'noma-lum': 'NOMA\'LUM FORMAT',
+    'rasm': 'Rasm (JPEG/PNG)',
+    'pdf': 'PDF hujjat',
+    'hujjat': 'Matn hujjati (DOCX/TXT)',
+    'noma-lum': 'Noma\'lum format',
   };
 
   return {
@@ -504,11 +504,11 @@ export function getCategoryColor(category: FindingCategory): string {
 
 export function getCategoryLabel(category: FindingCategory): string {
   const labels: Record<FindingCategory, string> = {
-    'shaxs': 'Shaxs',
-    'aloqa': 'Aloqa',
+    'shaxs': 'Siz haqingizda',
+    'aloqa': 'Aloqa ma\'lumotlari',
     'tashkilot': 'Tashkilot',
     'joylashuv': 'Joylashuv',
-    'raqamli-kirish': 'Raqamli kirish',
+    'raqamli-kirish': 'Raqamli ma\'lumotlar',
     'hujjat': 'Hujjat',
   };
   return labels[category];

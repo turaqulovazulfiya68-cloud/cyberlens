@@ -11,8 +11,8 @@ const NAV_ITEMS: { stage: AppStage; label: string; icon: typeof Shield }[] = [
   { stage: 'bosh-sahifa', label: 'Bosh sahifa', icon: Shield },
   { stage: 'yuklash', label: 'Tekshirish', icon: FileSearch },
   { stage: 'tarix', label: 'Tarix', icon: History },
-  { stage: 'himoyalangan-fayllar', label: 'Himoyalangan', icon: Lock },
-  { stage: 'vizion', label: 'Vizion', icon: Eye },
+  { stage: 'himoyalangan-fayllar', label: 'Himoyalangan fayllar', icon: Lock },
+  { stage: 'vizion', label: 'Kelajak', icon: Eye },
   { stage: 'sozlamalar', label: 'Sozlamalar', icon: Settings },
 ];
 

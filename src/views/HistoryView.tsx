@@ -55,9 +55,9 @@ export function HistoryView() {
         <div className="mb-8 animate-fade-in-up">
           <div className="flex items-center gap-3 mb-2">
             <History className="w-7 h-7 text-cyber-cyan" />
-            <h1 className="font-display font-black text-3xl sm:text-4xl text-white">SKANERLASH TARIXI</h1>
+            <h1 className="font-display font-black text-3xl sm:text-4xl text-white">Tekshiruv tarixi</h1>
           </div>
-          <p className="text-gray-400 text-sm">Barcha tekshirilgan fayllar va ularning natijalari.</p>
+          <p className="text-gray-400 text-sm">Shu vaqtga qadar tekshirgan barcha fayllaringiz va ularning natijalari.</p>
         </div>
 
         {loading ? (
@@ -67,8 +67,8 @@ export function HistoryView() {
         ) : records.length === 0 ? (
           <div className="glass-panel rounded-lg p-12 text-center">
             <History className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-            <p className="text-gray-500 text-sm mb-2">Tarix bo'sh</p>
-            <p className="text-gray-600 text-xs">Hali hech qanday fayl tekshirilmagan.</p>
+            <p className="text-gray-500 text-sm mb-2">Hozircha bo'sh</p>
+            <p className="text-gray-600 text-xs">Siz hali hech qanday fayl tekshirmadingiz.</p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -97,13 +97,13 @@ export function HistoryView() {
 
                     {/* Findings */}
                     <div className="text-center">
-                      <p className="font-mono text-[10px] text-gray-600">TOPILMALAR</p>
+                      <p className="font-mono text-[10px] text-gray-600">Topilmalar</p>
                       <p className="text-white text-sm font-bold">{record.findings_count}</p>
                     </div>
 
                     {/* Risk score */}
                     <div className="text-center">
-                      <p className="font-mono text-[10px] text-gray-600">XAVF</p>
+                      <p className="font-mono text-[10px] text-gray-600">Xavf</p>
                       <p className="font-display font-bold text-sm" style={{ color: riskColor }}>
                         {record.risk_score}/100
                       </p>
@@ -112,7 +112,7 @@ export function HistoryView() {
                     {/* Protected risk */}
                     {record.protected_findings_count > 0 && (
                       <div className="text-center">
-                        <p className="font-mono text-[10px] text-gray-600">HIMOYALANGAN</p>
+                        <p className="font-mono text-[10px] text-gray-600">Himoyalangan</p>
                         <p className="font-display font-bold text-sm" style={{ color: protectedRiskColor }}>
                           {record.protected_risk_score}/100
                         </p>

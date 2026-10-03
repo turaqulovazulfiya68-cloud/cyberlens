@@ -5,11 +5,11 @@ interface StageIndicatorProps {
 }
 
 const STAGES: { key: string; label: string; stages: AppStage[] }[] = [
-  { key: '1', label: 'ANIQLA', stages: ['yuklash', 'skanerlash'] },
-  { key: '2', label: 'DUSTUN', stages: ['natija'] },
-  { key: '3', label: 'BAHOLA', stages: ['natija'] },
-  { key: '4', label: 'HIMOYALA', stages: ['himoya'] },
-  { key: '5', label: 'TEKSHIR', stages: ['qayta-tekshirish'] },
+  { key: '1', label: 'Aniqla', stages: ['yuklash', 'skanerlash'] },
+  { key: '2', label: 'Tushun', stages: ['natija'] },
+  { key: '3', label: 'Bahola', stages: ['natija'] },
+  { key: '4', label: 'Himoyala', stages: ['himoya'] },
+  { key: '5', label: 'Tekshir', stages: ['qayta-tekshirish'] },
 ];
 
 export function StageIndicator({ currentStage }: StageIndicatorProps) {

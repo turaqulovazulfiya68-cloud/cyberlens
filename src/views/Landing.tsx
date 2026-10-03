@@ -16,7 +16,7 @@ export function Landing({ onNavigate }: LandingProps) {
             {/* Badge */}
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-cyber-cyan/30 bg-cyber-cyan/5">
               <div className="w-2 h-2 rounded-full bg-cyber-green animate-pulse" />
-              <span className="text-xs font-mono text-cyber-cyan">ULASHISHDAN OLDINGI XAVFSIZLIK NAZORATI</span>
+              <span className="text-xs font-mono text-cyber-cyan">Faylni ulashishdan oldin xavfsizlikni tekshiring</span>
             </div>
 
             {/* Title */}
@@ -33,7 +33,7 @@ export function Landing({ onNavigate }: LandingProps) {
             {/* Description */}
             <p className="text-gray-500 text-sm sm:text-base leading-relaxed max-w-xl">
               Rasm, hujjat yoki boshqa faylni ulashmoqchimisiz? CyberLens uni avtomatik tekshiradi va siz
-              sezmagan maxfiy ma'lumotlarni aniqlaydi.
+              sezmagan shaxsiy ma'lumotlarni aniqlaydi.
             </p>
 
             {/* CTA */}
@@ -44,7 +44,7 @@ export function Landing({ onNavigate }: LandingProps) {
               >
                 <span className="flex items-center gap-2">
                   <FileSearch className="w-4 h-4" />
-                  ULASHISHDAN OLDIN TEKSHIRISH
+                  Ulashishdan oldin tekshirish
                 </span>
               </button>
               <button
@@ -52,16 +52,16 @@ export function Landing({ onNavigate }: LandingProps) {
                 className="px-8 py-4 border border-cyber-cyan/30 text-cyber-cyan font-mono text-sm tracking-wider rounded-sm hover:bg-cyber-cyan/10 transition-all flex items-center gap-2 justify-center"
               >
                 <Play className="w-4 h-4" />
-                DEMONI ISHGA TUSHIRISH
+                Demoni ishga tushirish
               </button>
             </div>
 
             {/* Stats */}
             <div className="grid grid-cols-3 gap-4 pt-6">
               {[
-                { label: 'ANIQLA', value: 'Fayl turi' },
-                { label: 'TAHLIL', value: 'Sezgir ma\'lumot' },
-                { label: 'HIMOYALA', value: 'Avtomatik' },
+                { label: 'Aniqla', value: 'Fayl turini avtomatik tanidi' },
+                { label: 'Tahlil', value: 'Shaxsiy ma\'lumotlarni topadi' },
+                { label: 'Himoyala', value: 'Yashirishni taklif qiladi' },
               ].map((stat) => (
                 <div key={stat.label} className="glass-panel rounded p-3">
                   <div className="text-cyber-cyan font-mono text-xs font-bold">{stat.label}</div>
@@ -82,7 +82,7 @@ export function Landing({ onNavigate }: LandingProps) {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="glass-panel-red rounded-lg p-8 sm:p-12 corner-brackets">
           <div className="text-center space-y-4">
-            <p className="text-gray-500 font-mono text-sm">PLATFORMANING ASOSIY SAVOLI</p>
+            <p className="text-gray-500 font-mono text-sm">Asosiy savol</p>
             <div className="space-y-2">
               <p className="text-2xl sm:text-3xl text-gray-600 line-through font-display">
                 "Faylda nima bor?"
@@ -99,19 +99,19 @@ export function Landing({ onNavigate }: LandingProps) {
       {/* Workflow */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <h2 className="text-center font-display font-bold text-2xl sm:text-3xl text-white mb-2">
-          CYBERLENS ISHLASH JARAYONI
+          CyberLens qanday ishlaydi
         </h2>
         <p className="text-center text-gray-500 text-sm mb-10">
-          YARATDI → ULASHMOQCHI → TEKSHIRADI → ANIQLAYDI → TAHLIL → XAVF → HIMOYALA → QAYTA TEKSHIR → XAVFSIZ ULASHISH
+          Faylni olib kelasiz → CyberLens tekshiradi → Shaxsiy ma'lumotlarni aniqlaydi → Birgalikdagi xavfni tahlil qiladi → Yashirishni taklif qiladi → Qayta tekshiradi → Xavfsiz ulashasiz
         </p>
 
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
           {[
-            { icon: FileSearch, label: 'ANIQLA', desc: 'Fayl turini avtomatik aniqlash', color: '#00f0ff' },
-            { icon: Eye, label: 'DUSTUN', desc: 'Sezgir ma\'lumotlarni tushunish', color: '#1a7fff' },
-            { icon: AlertTriangle, label: 'BAHOLA', desc: 'Xavf darajasini baholash', color: '#ffaa00' },
-            { icon: Lock, label: 'HIMOYALA', desc: 'Avtomatik himoya tavsiyalari', color: '#ff2d55' },
-            { icon: CheckCircle2, label: 'TEKSHIR', desc: 'Qayta tekshiruv va tasdiqlash', color: '#00ff88' },
+            { icon: FileSearch, label: 'Aniqla', desc: 'Fayl turini avtomatik aniqlaydi', color: '#00f0ff' },
+            { icon: Eye, label: 'Tushun', desc: 'Qaysi ma\'lumotlar sezgir ekanini biladi', color: '#1a7fff' },
+            { icon: AlertTriangle, label: 'Bahola', desc: 'Xavf darajasini baholaydi', color: '#ffaa00' },
+            { icon: Lock, label: 'Himoyala', desc: 'Yashirishni taklif qiladi', color: '#ff2d55' },
+            { icon: CheckCircle2, label: 'Tekshir', desc: 'Himoyani qayta tekshirib tasdiqlaydi', color: '#00ff88' },
           ].map((step, i) => {
             const Icon = step.icon;
             return (
@@ -140,20 +140,21 @@ export function Landing({ onNavigate }: LandingProps) {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="glass-panel rounded-lg p-6 sm:p-10">
           <h2 className="font-display font-bold text-xl sm:text-2xl text-cyber-red mb-2 text-glow-red">
-            XAVF ZANJIRI
+            Xavf zanjiri
           </h2>
           <p className="text-gray-500 text-sm mb-8">
-            Fayl ulashilganda ma'lumotlar qanday zanjir hosil qilishi va to'liq profil ochib berishi mumkin.
+            Fayl ulashilganda ma'lumotlar qanday qilib zanjir hosil qilishi va siz haqingizda to'liq
+            ma'lumot ochib berishi mumkin.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-0 justify-center flex-wrap">
             {[
-              { label: 'FAYL', color: '#666' },
-              { label: 'SHAXSIY MA\'LUMOT', color: '#00f0ff' },
-              { label: 'ALOQA MA\'LUMOTI', color: '#1a7fff' },
-              { label: 'TASHKILOT', color: '#00ff88' },
-              { label: 'TO\'LIQ PROFIL', color: '#ffaa00' },
-              { label: 'IJTIMOIY MUHANDISLIK XAVFI', color: '#ff2d55' },
+              { label: 'Fayl', color: '#666' },
+              { label: 'Shaxsiy ma\'lumot', color: '#00f0ff' },
+              { label: 'Aloqa ma\'lumoti', color: '#1a7fff' },
+              { label: 'Tashkilot', color: '#00ff88' },
+              { label: 'To\'liq profil', color: '#ffaa00' },
+              { label: 'Ijtimoiy muhandislik xavfi', color: '#ff2d55' },
             ].map((item, i) => (
               <div key={i} className="flex items-center gap-2">
                 <div
@@ -174,7 +175,7 @@ export function Landing({ onNavigate }: LandingProps) {
           </div>
 
           <p className="text-center text-xs text-gray-600 mt-6 font-mono">
-            * Bu faqat defensive cybersecurity explanation. Real hujum amalga oshirilmaydi.
+            * Bu faqat himoyaviy tushuntirish. Hech qanday real hujum amalga oshirilmaydi.
           </p>
         </div>
       </section>
@@ -186,18 +187,18 @@ export function Landing({ onNavigate }: LandingProps) {
           <div className="relative">
             <Shield className="w-16 h-16 text-cyber-cyan mx-auto mb-6 animate-pulse-glow" />
             <h2 className="font-display font-bold text-2xl sm:text-4xl text-white mb-4">
-              FAYLINGIZNI XAVFSIZ ULASHISHGA TAYYORMISIZ?
+              Faylingizni xavfsiz ulashishga tayyormisiz?
             </h2>
             <p className="text-gray-400 mb-8 max-w-2xl mx-auto">
-              CyberLens faylingizdagi sezgir ma'lumotlarni avtomatik aniqlaydi, ularning birgalikdagi
-              ta'sirini tahlil qiladi va himoyalashni taklif qiladi.
+              CyberLens faylingizdagi shaxsiy ma'lumotlarni avtomatik aniqlaydi, ularning birgalikdagi
+              xavfini tahlil qiladi va yashirishni taklif qiladi.
             </p>
             <button
               onClick={() => onNavigate('yuklash')}
               className="px-10 py-4 bg-cyber-cyan text-cyber-black font-display font-bold text-sm tracking-wider rounded-sm hover:bg-cyber-cyan/90 transition-all glow-cyan inline-flex items-center gap-2"
             >
               <Upload className="w-5 h-5" />
-              TEKSHIRISHNI BOSHLASH
+              Tekshirishni boshlash
             </button>
           </div>
         </div>

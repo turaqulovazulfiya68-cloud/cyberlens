@@ -49,10 +49,10 @@ export function ResultsView({ result, onNavigate }: ResultsViewProps) {
     : result.findings;
 
   const riskLevelLabel: Record<string, string> = {
-    'past': 'PAST XAVF',
-    'orta': "O'RTA XAVF",
-    'yuqori': 'YUQORI XAVF',
-    'kritik': 'KRITIK XAVF',
+    'past': 'Past xavf',
+    'orta': "O'rtacha xavf",
+    'yuqori': 'Yuqori xavf',
+    'kritik': 'Kritik xavf',
   };
 
   return (
@@ -62,10 +62,10 @@ export function ResultsView({ result, onNavigate }: ResultsViewProps) {
         <div className="text-center mb-6 animate-fade-in-up">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyber-green/10 border border-cyber-green/30 mb-3">
             <ShieldAlert className="w-4 h-4 text-cyber-green" />
-            <span className="font-mono text-xs text-cyber-green font-bold">TEKSHIRUV YAKUNLANDI</span>
+            <span className="font-mono text-xs text-cyber-green font-bold">Tekshiruv yakunlandi</span>
           </div>
           <h1 className="font-display font-black text-3xl sm:text-4xl text-white mb-2">
-            NIMA TOPILDI?
+            Biz nima topdik
           </h1>
           <p className="text-gray-400 text-sm">
             {result.fileName} · {result.detectedType}
@@ -76,7 +76,7 @@ export function ResultsView({ result, onNavigate }: ResultsViewProps) {
         <div className="grid lg:grid-cols-3 gap-6 mb-8">
           {/* Risk gauge */}
           <div className="glass-panel-red rounded-xl p-6 flex flex-col items-center justify-center corner-brackets">
-            <p className="text-cyber-red font-mono text-xs mb-4">XAVFSIZLIK BAHOSI</p>
+            <p className="text-cyber-red font-mono text-xs mb-4">Xavf darajasi</p>
             <RiskGauge score={result.riskScore} level={result.riskLevel} size={200} />
             <div className="mt-4 text-center">
               <p className="text-2xl font-display font-bold text-cyber-red text-glow-red">
@@ -87,11 +87,11 @@ export function ResultsView({ result, onNavigate }: ResultsViewProps) {
 
           {/* Risk breakdown */}
           <div className="glass-panel rounded-xl p-6 lg:col-span-2">
-            <h3 className="font-mono text-sm text-cyber-cyan mb-4">XAVF FORMULASI (PROTOTIP)</h3>
+            <h3 className="font-mono text-sm text-cyber-cyan mb-4">Bu xavf qanday hisoblandi</h3>
             <div className="terminal-text bg-cyber-black/50 rounded p-3 mb-4 border border-cyber-cyan/10">
               <p className="text-cyber-cyan">
                 <span className="text-gray-600">{'>'} </span>
-                XAVF = SEZGIRLIK × OCHIQLIK × BOG'LIQLIK × TA'SIR
+                Xavf = sezgirligi × oshkor bo'lishi × bog'liqligi × ta'siri
               </p>
               <p className="text-gray-500 mt-1">
                 <span className="text-gray-600">{'>'} </span>
@@ -99,16 +99,16 @@ export function ResultsView({ result, onNavigate }: ResultsViewProps) {
               </p>
               <p className="text-cyber-amber mt-1">
                 <span className="text-gray-600">{'>'} </span>
-                Eslatma: Bu prototip heuristik baholash. 100% aniqlik da'vo qilinmaydi.
+                Eslatma: Bu baholash taxminiy hisoblanadi. 100% aniqlik kafolatlanmaydi.
               </p>
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {[
-                { label: 'SEZGIRLIK', value: result.riskBreakdown.sensitivity, color: '#ff2d55' },
-                { label: 'OCHIQLIK', value: result.riskBreakdown.openness, color: '#ffaa00' },
-                { label: 'BOG\'LIQLIK', value: result.riskBreakdown.linkage, color: '#00f0ff' },
-                { label: 'TA\'SIR', value: result.riskBreakdown.impact, color: '#1a7fff' },
+                { label: "Sezgirligi", value: result.riskBreakdown.sensitivity, color: '#ff2d55' },
+                { label: "Oshkor bo'lishi", value: result.riskBreakdown.openness, color: '#ffaa00' },
+                { label: "Bog'liqligi", value: result.riskBreakdown.linkage, color: '#00f0ff' },
+                { label: "Ta'siri", value: result.riskBreakdown.impact, color: '#1a7fff' },
               ].map((item) => (
                 <div key={item.label} className="text-center">
                   <div className="relative w-20 h-20 mx-auto mb-2">
@@ -136,21 +136,20 @@ export function ResultsView({ result, onNavigate }: ResultsViewProps) {
               className="mt-4 text-xs text-cyber-cyan font-mono flex items-center gap-1 hover:gap-2 transition-all"
             >
               <Lightbulb className="w-3 h-3" />
-              {showRiskExplanation ? 'Yopish' : 'Nima sababdan bunday baho?'}
+              {showRiskExplanation ? 'Yopish' : 'Nega bunday baho berildi?'}
             </button>
             {showRiskExplanation && (
               <div className="mt-3 p-3 bg-cyber-navy/50 rounded text-xs text-gray-400 leading-relaxed animate-fade-in">
                 {result.riskScore >= 50 ? (
                   <p>
-                    Sizning faylingizda bir nechta sezgir ma'lumotlar aniqlandi. Ular birgalikda
-                    siz haqingizda to'liq profilni ochib berishi mumkin. Yuqori sezgirlik va
-                    ochiqlik darajasi, shuningdek ma'lumotlar orasidagi bog'liqlik xavf darajasini
-                    oshirmoqda.
+                    Faylingizda bir nechta shaxsiy ma'lumot topdik. Ular birgalikda siz haqingizda
+                    to'liqroq ma'lumot olish imkonini beradi. Yuqori sezgirlik va oshkor bo'lish
+                    darajasi, shuningdek ma'lumotlar orasidagi bog'liqlik xavfni oshirmoqda.
                   </p>
                 ) : (
                   <p>
-                    Sizning faylingizda kam miqdorda sezgir ma'lumotlar aniqlandi. Ularning
-                    soni va o'zaro bog'liqligi past, shuning uchun xavf darajasi nisbatan past.
+                    Faylingizda kam miqdorda shaxsiy ma'lumot topdik. Ularning soni va
+                    o'zaro bog'liqligi past, shuning uchun xavf darajasi nisbatan past.
                   </p>
                 )}
               </div>
@@ -162,11 +161,11 @@ export function ResultsView({ result, onNavigate }: ResultsViewProps) {
         {result.findings.length > 1 && (
           <div className="glass-panel-red rounded-xl p-6 sm:p-8 mb-8 corner-brackets">
             <h2 className="font-display font-bold text-xl sm:text-2xl text-cyber-red text-glow-red mb-2">
-              BIRGALIKDAGI MAXFIYLIK XAVFI
+              Birgalikdagi xavf
             </h2>
             <p className="text-gray-400 text-sm mb-6">
-              Ushbu ma'lumotlar birgalikda alohida ma'lumotlarga qaraganda foydalanuvchi haqida
-              yanada to'liqroq profilni ochib berishi mumkin.
+              Har bir ma'lumot o'z-alone katta xavf tug'dirmasligi mumkin. Lekin ular birga
+              bo'lsa, siz haqingizda ancha to'liq ma'lumot ochib berishi mumkin.
             </p>
 
             <div className="grid lg:grid-cols-2 gap-6 items-center">
@@ -179,7 +178,7 @@ export function ResultsView({ result, onNavigate }: ResultsViewProps) {
 
               {/* Chain visualization */}
               <div className="space-y-2">
-                <p className="text-xs font-mono text-cyber-cyan mb-3">MA'LUMOTLAR ZANJIRI:</p>
+                <p className="text-xs font-mono text-cyber-cyan mb-3">Ma'lumotlar zanjiri:</p>
                 {result.findings.map((f, i) => (
                   <div key={f.id} className="flex items-center gap-2">
                     <div
@@ -200,8 +199,8 @@ export function ResultsView({ result, onNavigate }: ResultsViewProps) {
                 <div className="mt-4 p-3 bg-cyber-red/5 border border-cyber-red/20 rounded">
                   <p className="text-xs text-gray-400 leading-relaxed">
                     {result.findings.length > 2
-                      ? `${result.findings.length} ta ma'lumot birgalikda shaxsni aniqlash, aloqani topish va to'liq profil qurish uchun ishlatilishi mumkin.`
-                      : 'Bu ma\'lumotlar birgalikda shaxs haqida qo\'shimcha ma\'lumot ochib berishi mumkin.'}
+                      ? `${result.findings.length} ta ma'lumot birgalikda sizni aniqlash, aloqangizni topish va to'liq profil qurish uchun ishlatilishi mumkin.`
+                      : 'Bu ma\'lumotlar birgalikda siz haqingizda qo\'shimcha ma\'lumot ochib berishi mumkin.'}
                   </p>
                 </div>
               </div>
@@ -212,10 +211,10 @@ export function ResultsView({ result, onNavigate }: ResultsViewProps) {
         {/* Privacy risk map */}
         <div className="glass-panel rounded-xl p-6 sm:p-8 mb-8">
           <h2 className="font-display font-bold text-lg sm:text-xl text-cyber-cyan mb-2">
-            MAXFIYLIK XAVFI XARITASI
+            Qaysi ma'lumotlar eng xavflisi
           </h2>
           <p className="text-gray-500 text-xs mb-6">
-            Kategoriyani bosganda tegishli topilmalar yoritiladi.
+            Toifani bosganda o'sha toifaga kiruvchi topilmalar yoritiladi.
           </p>
           <div className="grid lg:grid-cols-2 gap-6 items-center">
             <RadarChart categories={radarData} size={320} />
@@ -242,7 +241,7 @@ export function ResultsView({ result, onNavigate }: ResultsViewProps) {
                       {getCategoryLabel(cat)}
                     </span>
                     <span className="font-mono text-xs text-gray-500">
-                      {count} topilma
+                      {count} ta topilma
                     </span>
                   </button>
                 );
@@ -255,7 +254,7 @@ export function ResultsView({ result, onNavigate }: ResultsViewProps) {
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-display font-bold text-lg sm:text-xl text-white">
-              TOPILGAN MA'LUMOTLAR
+              Topilgan ma'lumotlar
             </h2>
             <div className="flex items-center gap-2 text-xs text-gray-500 font-mono">
               <Filter className="w-3 h-3" />
@@ -265,7 +264,7 @@ export function ResultsView({ result, onNavigate }: ResultsViewProps) {
 
           {filteredFindings.length === 0 ? (
             <div className="glass-panel rounded-lg p-8 text-center">
-              <p className="text-gray-500 text-sm">Bu kategoriyada topilma yo'q.</p>
+              <p className="text-gray-500 text-sm">Bu toifada hech narsa topilmadi.</p>
             </div>
           ) : (
             <div className="grid sm:grid-cols-2 gap-4">
@@ -307,10 +306,10 @@ export function ResultsView({ result, onNavigate }: ResultsViewProps) {
 
                     {/* Details */}
                     <div className="space-y-2 text-xs">
-                      <DetailRow label="QAYERDAN" value={finding.location} />
-                      <DetailRow label="NEGA MUHIM" value={finding.riskExplanation} />
-                      <DetailRow label="OSHKOR BO'LISHI" value={finding.description} />
-                      <DetailRow label="TAVSIYA" value={finding.recommendation} highlight />
+                      <DetailRow label="Qayerdan topildi" value={finding.location} />
+                      <DetailRow label="Nega muhim" value={finding.riskExplanation} />
+                      <DetailRow label="Holat" value={finding.description} />
+                      <DetailRow label="Tavsiya" value={finding.recommendation} highlight />
                     </div>
                   </div>
                 );
@@ -323,16 +322,16 @@ export function ResultsView({ result, onNavigate }: ResultsViewProps) {
         <div className="glass-panel rounded-xl p-8 text-center corner-brackets">
           <ShieldAlert className="w-12 h-12 text-cyber-red mx-auto mb-4" />
           <h2 className="font-display font-bold text-xl sm:text-2xl text-white mb-2">
-            XAVFNI KAMAYTIRISH VAQTI
+            Endi xavfni kamaytirish navbati
           </h2>
           <p className="text-gray-400 text-sm mb-6 max-w-xl mx-auto">
-            CyberLens aniqlangan xavflarga qarab avtomatik himoya tavsiyalarini taqdim etadi.
+            CyberLens topilgan xavflarga qarab har biri uchun yashirish usulini taklif qiladi.
           </p>
           <button
             onClick={() => onNavigate('himoya')}
             className="px-8 py-3.5 bg-cyber-red text-white font-display font-bold text-sm tracking-wider rounded hover:bg-cyber-red/90 transition-all glow-red"
           >
-            HIMOYALASHNI BOSHLASH
+            Himoyalashni boshlash
           </button>
         </div>
       </div>

@@ -44,20 +44,20 @@ export function SettingsView() {
         <div className="mb-8 animate-fade-in-up">
           <div className="flex items-center gap-3 mb-2">
             <Settings className="w-7 h-7 text-cyber-cyan animate-rotate-slow" />
-            <h1 className="font-display font-black text-3xl sm:text-4xl text-white">SOZLAMALAR</h1>
+            <h1 className="font-display font-black text-3xl sm:text-4xl text-white">Sozlamalar</h1>
           </div>
           <p className="text-gray-400 text-sm">
-            Faqat amalda ishlaydigan funksiyalar "yoqilgan" deb ko'rsatiladi.
+            Faqat haqiqatan ishlayotgan funksiyalar "yoqilgan" deb ko'rsatiladi.
           </p>
         </div>
 
         <div className="space-y-3">
           {/* Privacy */}
           <div className="mb-2">
-            <h2 className="font-mono text-xs text-cyber-cyan mb-2">MAXFIYLIK</h2>
+            <h2 className="font-mono text-xs text-cyber-cyan mb-2">Maxfiylik</h2>
             <Toggle
               label="Maxfiylik rejimi"
-              description="Fayllarni faqat lokallikda qayta ishlash"
+              description="Fayllaringiz shu kompyuteringizda qayta ishlanadi, hech qayerga yuborilmaydi"
               defaultOn={true}
               icon={Lock}
             />
@@ -65,17 +65,17 @@ export function SettingsView() {
 
           {/* File storage */}
           <div className="mb-2">
-            <h2 className="font-mono text-xs text-cyber-cyan mb-2">FAYLLARNI SAQLASH</h2>
+            <h2 className="font-mono text-xs text-cyber-cyan mb-2">Fayllarni saqlash</h2>
             <Toggle
-              label="Skanerlash tarixini saqlash"
-              description="Tekshiruv natijalarini saqlash"
+              label="Tekshiruv tarixini saqlash"
+              description="Tekshiruv natijalarini saqlab borish"
               defaultOn={true}
               icon={Database}
             />
             <div className="mt-2">
               <Toggle
                 label="Avtomatik o'chirish"
-                description="30 kundan eski yozuvlarni avtomatik o'chirish (faol emas)"
+                description="30 kundan eski yozuvlarni avtomatik o'chirish (hozircha ishlamaydi)"
                 defaultOn={false}
                 icon={Trash2}
               />
@@ -84,10 +84,10 @@ export function SettingsView() {
 
           {/* Notifications */}
           <div className="mb-2">
-            <h2 className="font-mono text-xs text-cyber-cyan mb-2">BILDIRISHNOMALAR</h2>
+            <h2 className="font-mono text-xs text-cyber-cyan mb-2">Bildirishnomalar</h2>
             <Toggle
-              label="Xavf bildirishnomalari"
-              description="Yuqori xavf aniqlanganda ogohlantirish"
+              label="Xavf haqida ogohlantirish"
+              description="Yuqori xavf aniqlanganda sizni ogohlantirish"
               defaultOn={true}
               icon={Bell}
             />
@@ -95,7 +95,7 @@ export function SettingsView() {
 
           {/* Language */}
           <div className="mb-2">
-            <h2 className="font-mono text-xs text-cyber-cyan mb-2">TIL</h2>
+            <h2 className="font-mono text-xs text-cyber-cyan mb-2">Til</h2>
             <div className="glass-panel rounded-lg p-4">
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-10 h-10 rounded-lg bg-cyber-cyan/10 border border-cyber-cyan/20 flex items-center justify-center">
@@ -103,7 +103,7 @@ export function SettingsView() {
                 </div>
                 <div>
                   <p className="text-sm text-white font-medium">Interfeys tili</p>
-                  <p className="text-xs text-gray-500 mt-0.5">Tilni tanlang</p>
+                  <p className="text-xs text-gray-500 mt-0.5">Qaysi til ishlatishni tanlang</p>
                 </div>
               </div>
               <div className="flex gap-2">
@@ -136,8 +136,8 @@ export function SettingsView() {
             <p className="font-display font-bold text-lg text-cyber-cyan text-glow-cyan">CYBERLENS</p>
             <p className="text-xs text-gray-500 mt-1">v1.0.0 — Prototip</p>
             <p className="text-xs text-gray-600 mt-2 max-w-md mx-auto">
-              Ulashishdan oldingi avtomatik xavfsizlik nazorati. Bu prototip heuristik
-              baholashdan foydalanadi va 100% aniqlikni da'vo qilmaydi.
+              Ulashishdan oldin faylingizni avtomatik tekshiruvchi xavfsizlik yordamchisi.
+              Bu taxminiy baholashdan foydalanadi va 100% aniqlikni kafolatlamaydi.
             </p>
           </div>
         </div>

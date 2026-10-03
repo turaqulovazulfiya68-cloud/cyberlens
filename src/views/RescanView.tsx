@@ -10,13 +10,13 @@ interface RescanViewProps {
 }
 
 const RESCAN_STEPS = [
-  'Himoyalangan fayl yuklanmoqda',
-  'Oldingi xavf manbalari tekshirilmoqda',
-  'Sezgir ma\'lumotlar qayta skanerlanmoqda',
+  'Himoyalangan fayl qayta yuklanmoqda',
+  'Oldingi xavfli ma\'lumotlar tekshirilmoqda',
+  'Shaxsiy ma\'lumotlar qayta qidirilmoqda',
   'QR-kod qayta tekshirilmoqda',
-  'Metadata qayta tekshirilmoqda',
-  'Bog\'liqliklar qayta tahlil qilinmoqda',
-  'Yangi xavf baholanmoqda',
+  'Fayl ichidagi qo\'shimcha ma\'lumotlar qayta tekshirilmoqda',
+  'Ma\'lumotlar bog\'liqligi qayta tahlil qilinmoqda',
+  'Yangi xavf darajasi baholanmoqda',
 ];
 
 export function RescanView({ result, onNavigate, onScanComplete }: RescanViewProps) {
@@ -42,10 +42,10 @@ export function RescanView({ result, onNavigate, onScanComplete }: RescanViewPro
         <div className="text-center mb-8 animate-fade-in-up">
           <RotateCw className={`w-10 h-10 text-cyber-cyan mx-auto mb-3 ${!done ? 'animate-spin' : ''}`} />
           <h1 className="font-display font-black text-3xl sm:text-5xl text-cyber-cyan text-glow-cyan mb-2">
-            {!done ? 'QAYTA TEKSHIRILMOQDA...' : 'HIMOYA TASDIQLANDI'}
+            {!done ? 'Qayta tekshiryapmiz...' : 'Himoya tasdiqlandi'}
           </h1>
           <p className="text-gray-400 text-sm">
-            {!done ? 'Himoyalangan fayl avtomatik qayta skanerlanmoqda' : 'Ulashishdan oldingi xavfsizlik nazorati yakunlandi'}
+            {!done ? 'Himoyalangan faylni qayta tekshiryapmiz' : 'Ulashishdan oldingi xavfsizlik nazorati yakunlandi'}
           </p>
         </div>
 
@@ -55,7 +55,7 @@ export function RescanView({ result, onNavigate, onScanComplete }: RescanViewPro
             <div className="glass-panel rounded-xl p-8 corner-brackets scan-overlay mb-6">
               <div className="mb-6">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="font-mono text-xs text-cyber-cyan">QAYTA TEKSHIRUV</span>
+                  <span className="font-mono text-xs text-cyber-cyan">Qayta tekshiruv</span>
                   <span className="font-display font-black text-2xl text-cyber-cyan text-glow-cyan">{progress}%</span>
                 </div>
                 <div className="h-2 bg-cyber-navy rounded-full overflow-hidden">
@@ -129,13 +129,13 @@ export function RescanView({ result, onNavigate, onScanComplete }: RescanViewPro
                 <div className="flex items-center gap-3">
                   <CheckCircle2 className="w-5 h-5 text-cyber-green flex-shrink-0" />
                   <p className="text-sm text-gray-300">
-                    Oldingi xavf manbalari qayta tekshirildi.
+                    Oldingi xavfli ma'lumotlar qayta tekshirildi.
                   </p>
                 </div>
                 <div className="flex items-center gap-3">
                   <CheckCircle2 className="w-5 h-5 text-cyber-green flex-shrink-0" />
                   <p className="text-sm text-gray-300">
-                    Himoyalangan ma'lumotlar endi oshkor qilinmaydi.
+                    Yashirilgan ma'lumotlar endi ko'rinmayapti.
                   </p>
                 </div>
                 <div className="flex items-center gap-3">
@@ -158,7 +158,7 @@ export function RescanView({ result, onNavigate, onScanComplete }: RescanViewPro
                   onClick={() => onNavigate('himoyalangan-fayllar')}
                   className="px-8 py-3.5 bg-cyber-green text-cyber-black font-display font-bold text-sm tracking-wider rounded hover:bg-cyber-green/90 transition-all glow-green inline-flex items-center gap-2"
                 >
-                  HIMOYALANGAN FAYLLARGA
+                  Himoyalangan fayllarga
                   <ArrowRight className="w-5 h-5" />
                 </button>
               </div>

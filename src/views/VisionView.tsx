@@ -8,28 +8,28 @@ export function VisionView() {
         <div className="text-center mb-12 animate-fade-in-up">
           <Eye className="w-12 h-12 text-cyber-cyan mx-auto mb-4 animate-pulse-glow" />
           <h1 className="font-display font-black text-3xl sm:text-5xl text-white mb-4">
-            CYBERLENS FAQAT SAYT BO'LIB QOLMASLIGI KERAK
+            CyberLens faqat sayt bo'lib qolmasligi kerak
           </h1>
           <p className="text-gray-400 text-sm sm:text-base max-w-2xl mx-auto">
-            CyberLens — bu ulashish oldidan avtomatik xavfsizlik qatlami. Kelajakda u har bir
-            ulashish nuqtasida ishlaydi.
+            CyberLens — bu faylni ulashishdan oldin avtomatik tekshiruvchi xavfsizlik
+            yordamchisi. Kelajakda u har bir ulashish joyida ishlashi mumkin.
           </p>
         </div>
 
         {/* Future flow */}
         <div className="glass-panel rounded-xl p-6 sm:p-10 mb-8 corner-brackets">
           <h2 className="font-display font-bold text-xl text-cyber-cyan mb-8 text-center">
-            KELAJAKDAGI KONSEPSIYA
+            Kelajakdagi tasavvur
           </h2>
 
           <div className="flex flex-col gap-4 max-w-xl mx-auto">
             {[
-              { icon: Globe, label: 'Telegram Web / Gmail / Brauzer / boshqa platforma', color: '#00f0ff' },
-              { icon: Layers, label: 'CYBERLENS XAVFSIZLIK QATLAMI', color: '#1a7fff' },
-              { icon: FileSearch, label: "ULASHISH OLDIDAN AVTOMATIK TEKSHIRUV", color: '#ffaa00' },
-              { icon: ShieldCheck, label: 'XAVF ANIQLANDI', color: '#ff2d55' },
-              { icon: Send, label: 'HIMOYALANGAN NUSXANI YUBORISH', color: '#00ff88' },
-              { icon: ArrowRight, label: 'XAVFSIZ ULASHISH', color: '#00ff88' },
+              { icon: Globe, label: 'Telegram, Gmail yoki brauzerda fayl ulashishni bosing', color: '#00f0ff' },
+              { icon: Layers, label: 'CyberLens xavfsizlik qatlami avtomatik ishga tushadi', color: '#1a7fff' },
+              { icon: FileSearch, label: 'Ulashishdan oldin avtomatik tekshiruv', color: '#ffaa00' },
+              { icon: ShieldCheck, label: 'Xavfli ma\'lumotlar aniqlandi va yashirildi', color: '#ff2d55' },
+              { icon: Send, label: 'Himoyalangan nusxa yuboriladi', color: '#00ff88' },
+              { icon: ArrowRight, label: 'Xavfsiz ulashish', color: '#00ff88' },
             ].map((item, i) => {
               const Icon = item.icon;
               return (
@@ -59,18 +59,18 @@ export function VisionView() {
         <div className="grid sm:grid-cols-3 gap-4 mb-8">
           {[
             {
-              title: 'PLATFORMA INTEGRATSIYASI',
-              desc: "Telegram, Gmail va brauzer kengaytmalari orqali to'g'ridan-to'g'ri ulashish nuqtasida ishlaydi.",
+              title: 'Platforma bilan bog\'lanish',
+              desc: "Telegram, Gmail va brauzer kengaytmalari orqali to'g'ridan-to'g'ri ulashish joyida ishlaydi.",
               color: '#00f0ff',
             },
             {
-              title: 'AVTOMATIK HIMOYA',
-              desc: "Foydalanuvchi faylni ulashishni bosganda, CyberLens avtomatik tekshiradi va himoyalaydi.",
+              title: 'Avtomatik himoya',
+              desc: "Faylni ulashishni bosganda, CyberLens avtomatik tekshiradi va shaxsiy ma'lumotlarni yashiradi.",
               color: '#1a7fff',
             },
             {
-              title: 'XAVFSIZ ULASHISH',
-              desc: "Himoyalangan nusxa avtomatik yuboriladi. Sezgir ma'lumotlar oshkor bo'lmaydi.",
+              title: 'Xavfsiz ulashish',
+              desc: "Himoyalangan nusxa avtomatik yuboriladi. Shaxsiy ma'lumotlar oshkor bo'lmaydi.",
               color: '#00ff88',
             },
           ].map((card, i) => (
@@ -89,12 +89,12 @@ export function VisionView() {
 
         {/* Core question */}
         <div className="glass-panel-red rounded-xl p-8 sm:p-12 text-center corner-brackets">
-          <p className="text-gray-500 font-mono text-xs mb-4">CYBERLENS — BU SHUNCHA FILE SCANNER EMAS</p>
+          <p className="text-gray-500 font-mono text-xs mb-4">CyberLens — bu oddiy fayl tekshiruvchisi emas</p>
           <h2 className="font-display font-bold text-xl sm:text-2xl text-cyber-red text-glow-red mb-4">
-            BU — ULASHISH NUQTASIDAGI XAVFSIZLIK QATLAMI
+            Bu — ulashish joyidagi xavfsizlik qatlami
           </h2>
           <p className="text-gray-400 text-sm max-w-2xl mx-auto">
-            CyberLens foydalanuvchilarni "Share" tugmasini bosishdan oldin fikrlashga majbur qiladi.
+            CyberLens sizni "Ulashish" tugmasini bosishdan oldin to'xtab o'ylashga o'rgatadi.
             "Men bu faylni ulashsam, yana nimalarni oshkor qilaman?"
           </p>
         </div>

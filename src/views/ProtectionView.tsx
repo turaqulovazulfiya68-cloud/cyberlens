@@ -72,10 +72,11 @@ export function ProtectionView({ result, onResultUpdate, onNavigate }: Protectio
         <div className="text-center mb-8 animate-fade-in-up">
           <Lock className="w-10 h-10 text-cyber-cyan mx-auto mb-3 animate-pulse-glow" />
           <h1 className="font-display font-black text-3xl sm:text-5xl text-white mb-2">
-            HIMOYALASH
+            Himoyalash
           </h1>
           <p className="text-gray-400 text-sm max-w-2xl mx-auto">
-            Tizim aniqlangan xavfga qarab avtomatik tavsiya beradi. Himoyalashni xohlashingizni tanlang.
+            Biz topilgan har bir ma'lumot uchun yashirish usulini taklif qilamiz. Qaysi birini
+            yashirmoqchi ekanligingizni tanlang.
           </p>
         </div>
 
@@ -84,13 +85,13 @@ export function ProtectionView({ result, onResultUpdate, onNavigate }: Protectio
             {/* Protection options */}
             <div className="space-y-3 mb-8">
               <div className="flex items-center justify-between mb-2">
-                <h2 className="font-mono text-sm text-cyber-cyan">HIMOYA TAVSIYALARI</h2>
+                <h2 className="font-mono text-sm text-cyber-cyan">Yashirish takliflari</h2>
                 <button
                   onClick={applyAll}
                   className="text-xs text-cyber-cyan font-mono hover:text-white transition-colors flex items-center gap-1"
                 >
                   <Sparkles className="w-3 h-3" />
-                  HAMMASINI TANLASH
+                  Hammasini tanlash
                 </button>
               </div>
 
@@ -128,7 +129,7 @@ export function ProtectionView({ result, onResultUpdate, onNavigate }: Protectio
                           </span>
                         </div>
                         <p className="text-xs text-gray-500 mb-2 font-mono">
-                          Qiymat: <span className="text-gray-400">{finding.value.substring(0, 30)}...</span>
+                          Tarkib: <span className="text-gray-400">{finding.value.substring(0, 30)}...</span>
                         </p>
                         <div className="flex items-center gap-2 p-2 bg-cyber-cyan/5 border border-cyber-cyan/20 rounded">
                           <ShieldCheck className="w-4 h-4 text-cyber-cyan flex-shrink-0" />
@@ -138,7 +139,7 @@ export function ProtectionView({ result, onResultUpdate, onNavigate }: Protectio
 
                       {/* Sensitivity */}
                       <div className="flex-shrink-0 text-right">
-                        <p className="font-mono text-[10px] text-gray-600">SEZGIRLIK</p>
+                        <p className="font-mono text-[10px] text-gray-600">Sezgirligi</p>
                         <p className="font-display font-bold text-lg" style={{ color }}>{finding.sensitivity}</p>
                       </div>
                     </div>
@@ -156,8 +157,8 @@ export function ProtectionView({ result, onResultUpdate, onNavigate }: Protectio
               >
                 <ShieldCheck className="w-5 h-5" />
                 {selectedProtections.size > 0
-                  ? `${selectedProtections.size} TA MA'LUMOTNI HIMOYALASH`
-                  : 'HIMOYALASHNI TANLANG'}
+                  ? `${selectedProtections.size} ta ma'lumotni yashirish`
+                  : 'Yashirishni tanlang'}
               </button>
             </div>
           </>
@@ -166,16 +167,16 @@ export function ProtectionView({ result, onResultUpdate, onNavigate }: Protectio
             {/* Before / After comparison */}
             <div className="mb-8">
               <h2 className="font-display font-bold text-xl text-cyber-cyan mb-4 text-center">
-                BEFORE / AFTER TAQQOSLASH
+                Oldin va keyin
               </h2>
-              <p className="text-xs text-gray-600 text-center mb-6 font-mono">* Demo qiymatlar</p>
+              <p className="text-xs text-gray-600 text-center mb-6 font-mono">* Ko'rsatkich qiymatlar</p>
 
               <div className="grid sm:grid-cols-2 gap-6 mb-6">
                 {/* Before */}
                 <div className="glass-panel-red rounded-xl p-6">
                   <div className="flex items-center gap-2 mb-4">
                     <Eye className="w-5 h-5 text-cyber-red" />
-                    <h3 className="font-display font-bold text-sm text-cyber-red">ULASHISHDAN OLDIN</h3>
+                    <h3 className="font-display font-bold text-sm text-cyber-red">Ulashishdan oldin</h3>
                   </div>
                   <RiskGauge score={result.riskScore} level={result.riskLevel} size={160} label="XAVF: YUQORI" />
                   <div className="mt-4 space-y-1">
@@ -193,7 +194,7 @@ export function ProtectionView({ result, onResultUpdate, onNavigate }: Protectio
                 <div className="glass-panel rounded-xl p-6 border-cyber-green/30">
                   <div className="flex items-center gap-2 mb-4">
                     <ShieldCheck className="w-5 h-5 text-cyber-green" />
-                    <h3 className="font-display font-bold text-sm text-cyber-green">HIMOYALANGANDAN KEYIN</h3>
+                    <h3 className="font-display font-bold text-sm text-cyber-green">Himoyalagandan keyin</h3>
                   </div>
                   {protectedResult && (
                     <RiskGauge
@@ -214,7 +215,7 @@ export function ProtectionView({ result, onResultUpdate, onNavigate }: Protectio
                             style={{ background: isProtected ? '#333' : getCategoryColor(f.category) }}
                           />
                           <span className={isProtected ? 'text-gray-600 line-through' : 'text-gray-400'}>
-                            {isProtected ? 'Himoyalangan' : f.label}
+                            {isProtected ? 'Yashirilgan' : f.label}
                           </span>
                           {isProtected ? (
                             <EyeOff className="w-3 h-3 text-cyber-green ml-auto" />
@@ -242,8 +243,8 @@ export function ProtectionView({ result, onResultUpdate, onNavigate }: Protectio
                     <p className="font-display font-bold text-2xl text-cyber-green text-glow-green">
                       {protectedResult?.protectedRiskScore || 8}/100
                     </p>
-                    <p className="text-cyber-green text-sm font-mono mt-1">XAVFSIZ</p>
-                    <p className="text-xs text-gray-500 mt-2">Sezgir ma'lumotlar yashirilgan</p>
+                    <p className="text-cyber-green text-sm font-mono mt-1">Xavfsiz</p>
+                    <p className="text-xs text-gray-500 mt-2">Shaxsiy ma'lumotlar yashirilgan</p>
                   </div>
                 </div>
 
@@ -257,8 +258,8 @@ export function ProtectionView({ result, onResultUpdate, onNavigate }: Protectio
                     <p className="font-display font-bold text-2xl text-cyber-red text-glow-red">
                       {result.riskScore}/100
                     </p>
-                    <p className="text-cyber-red text-sm font-mono mt-1">XAVFLI</p>
-                    <p className="text-xs text-gray-500 mt-2">Sezgir ma'lumotlar ko'rinib turibdi</p>
+                    <p className="text-cyber-red text-sm font-mono mt-1">Xavfli</p>
+                    <p className="text-xs text-gray-500 mt-2">Shaxsiy ma'lumotlar ko'rinib turibdi</p>
                   </div>
                 </div>
 
@@ -270,29 +271,30 @@ export function ProtectionView({ result, onResultUpdate, onNavigate }: Protectio
 
                 {/* Labels */}
                 <div className="absolute top-3 left-3 px-2 py-1 bg-cyber-red/20 border border-cyber-red/40 rounded text-xs font-mono text-cyber-red">
-                  OLDIN
+                  Oldin
                 </div>
                 <div className="absolute top-3 right-3 px-2 py-1 bg-cyber-green/20 border border-cyber-green/40 rounded text-xs font-mono text-cyber-green">
-                  KEYIN
+                  Keyin
                 </div>
               </div>
-              <p className="text-xs text-gray-600 text-center mt-2 font-mono">← Slideri surib taqqoslang →</p>
+              <p className="text-xs text-gray-600 text-center mt-2 font-mono">← Surrash chizig'ini surib taqqoslang →</p>
             </div>
 
             {/* Continue to re-scan */}
             <div className="glass-panel rounded-xl p-8 text-center corner-brackets">
               <ShieldCheck className="w-10 h-10 text-cyber-green mx-auto mb-3" />
               <h2 className="font-display font-bold text-xl text-white mb-2">
-                HIMOYA QO'LLANILDI
+                Himoyalangan nusxa tayyor
               </h2>
               <p className="text-gray-400 text-sm mb-6">
-                Endi himoyalangan faylni qayta tekshirib, xavf manbalarining yo'qolganini tasdiqlash kerak.
+                Endi himoyalangan faylni qayta tekshirib, xavfli ma'lumotlar ko'rinmasligini
+                tasdiqlab olamiz.
               </p>
               <button
                 onClick={() => onNavigate('qayta-tekshirish')}
                 className="px-8 py-3.5 bg-cyber-green text-cyber-black font-display font-bold text-sm tracking-wider rounded hover:bg-cyber-green/90 transition-all glow-green inline-flex items-center gap-2"
               >
-                QAYTA TEKSHIRISH
+                Qayta tekshirish
                 <ArrowRight className="w-5 h-5" />
               </button>
             </div>

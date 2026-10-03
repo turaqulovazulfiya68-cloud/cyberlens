@@ -57,17 +57,25 @@ export function UploadView({ onFileSelected, onDemoMode }: UploadViewProps) {
     <File className="w-8 h-8 text-cyber-cyan" />
   ) : null;
 
+  const fileTypeLabel = (ft: string) => {
+    if (ft === 'rasm') return 'Rasm';
+    if (ft === 'pdf') return 'PDF hujjat';
+    if (ft === 'hujjat') return 'Matn hujjati';
+    return "Noma'lum format";
+  };
+
   return (
     <div className="relative min-h-screen pt-24 pb-12">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-8 animate-fade-in-up">
           <h1 className="font-display font-black text-3xl sm:text-5xl text-white mb-3">
-            SIZ NIMANI ULASHMOQCHISIZ?
+            Faylingizni tekshirishga olib keling
           </h1>
           <p className="text-gray-400 text-sm sm:text-base max-w-2xl mx-auto">
-            Bu faylni yuborishdan oldin uning xavfsizligini tekshiring.
-            CyberLens avtomatik ravishda fayl turini aniqlaydi va mos tahlilni tanlaydi.
+            Bu faylni kimdir bilan ulashmoqchimisiz? Avval uning ichida qanday shaxsiy ma'lumotlar
+            borligini tekshirib ko'ring. Siz fayl turini tanlamasdan ham, CyberLens avtomatik
+            aniqlaydi.
           </p>
         </div>
 
@@ -103,7 +111,7 @@ export function UploadView({ onFileSelected, onDemoMode }: UploadViewProps) {
                   Faylni shu yerga olib keling
                 </p>
                 <p className="text-gray-500 text-sm">
-                  Rasm, PDF, DOCX yoki boshqa qo'llab-quvvatlanadigan fayl
+                  Rasm, PDF yoki matn hujjati — har qanday faylni avtomatik aniqlaymiz
                 </p>
               </div>
 
@@ -112,14 +120,14 @@ export function UploadView({ onFileSelected, onDemoMode }: UploadViewProps) {
                   onClick={() => inputRef.current?.click()}
                   className="px-6 py-3 bg-cyber-cyan/10 border border-cyber-cyan/40 text-cyber-cyan font-mono text-sm rounded hover:bg-cyber-cyan/20 transition-all"
                 >
-                  FAYLNI TANLASH
+                  Faylni tanlash
                 </button>
                 <button
                   onClick={onDemoMode}
                   className="px-6 py-3 border border-cyber-amber/40 text-cyber-amber font-mono text-sm rounded hover:bg-cyber-amber/10 transition-all flex items-center gap-2 justify-center"
                 >
                   <Play className="w-4 h-4" />
-                  DEMONI ISHGA TUSHIRISH
+                  Demoni ishga tushirish
                 </button>
               </div>
 
@@ -132,7 +140,7 @@ export function UploadView({ onFileSelected, onDemoMode }: UploadViewProps) {
               />
 
               <p className="text-xs text-gray-600 font-mono pt-4">
-                * Faylingiz lokallikda qayta ishlanadi. Hech qayerga yuborilmaydi.
+                * Faylingiz shu kompyuteringizda qayta ishlanadi. Hech qayerga yuborilmaydi.
               </p>
             </div>
           ) : (
@@ -151,7 +159,7 @@ export function UploadView({ onFileSelected, onDemoMode }: UploadViewProps) {
                 </div>
                 <div className="flex-shrink-0">
                   <span className="px-3 py-1 text-xs font-mono font-bold text-cyber-cyan border border-cyber-cyan/30 rounded bg-cyber-cyan/10">
-                    {fileType === 'rasm' ? 'RASM' : fileType === 'pdf' ? 'PDF' : fileType === 'hujjat' ? 'HUJJAT' : 'NOMA\'LUM'}
+                    {fileType ? fileTypeLabel(fileType) : ''}
                   </span>
                 </div>
               </div>
@@ -160,20 +168,21 @@ export function UploadView({ onFileSelected, onDemoMode }: UploadViewProps) {
               <div className="glass-panel rounded-lg p-5 border-cyber-cyan/20">
                 <div className="flex items-center gap-2 mb-3">
                   <FileSearch className="w-4 h-4 text-cyber-cyan" />
-                  <span className="text-cyber-cyan font-mono text-xs font-bold">AVTOMATIK FAYL ANIQLASH</span>
+                  <span className="text-cyber-cyan font-mono text-xs font-bold">Fayl turini aniqladik</span>
                 </div>
                 <p className="text-gray-400 text-sm mb-4">
-                  CyberLens fayl turini avtomatik aniqladi va mos tahlilni tanladi.
+                  Siz fayl turini tanlamadingiz — CyberLens avtomatik aniqladi va unga mos
+                  tekshiruvni tanladi.
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <p className="text-xs text-gray-600 font-mono mb-1">FAYL TURI</p>
+                    <p className="text-xs text-gray-600 font-mono mb-1">Fayl turi</p>
                     <p className="text-white text-sm font-medium">
-                      {fileType === 'rasm' ? 'RASM' : fileType === 'pdf' ? 'PDF HUJJAT' : fileType === 'hujjat' ? 'MATN HUJJATI' : 'NOMA\'LUM FORMAT'}
+                      {fileType ? fileTypeLabel(fileType) : ''}
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-600 font-mono mb-1">TAHLIL MODULLARI</p>
+                    <p className="text-xs text-gray-600 font-mono mb-1">Nimani tekshiramiz</p>
                     <div className="flex flex-wrap gap-1.5">
                       {modules.map((mod) => (
                         <span
@@ -194,13 +203,13 @@ export function UploadView({ onFileSelected, onDemoMode }: UploadViewProps) {
                   onClick={startScan}
                   className="px-8 py-3.5 bg-cyber-cyan text-cyber-black font-display font-bold text-sm tracking-wider rounded hover:bg-cyber-cyan/90 transition-all glow-cyan"
                 >
-                  TEKSHIRISHNI BOSHLASH
+                  Tekshirishni boshlash
                 </button>
                 <button
                   onClick={() => setDetectedFile(null)}
                   className="px-8 py-3.5 border border-gray-700 text-gray-400 font-mono text-sm rounded hover:bg-gray-800 transition-all"
                 >
-                  BEKOR QILISH
+                  Boshqa fayl tanlash
                 </button>
               </div>
             </div>
@@ -218,9 +227,9 @@ export function UploadView({ onFileSelected, onDemoMode }: UploadViewProps) {
         {/* Info cards */}
         <div className="grid sm:grid-cols-3 gap-4 mt-8">
           {[
-            { title: 'RASM', mods: 'OCR + QR + METADATA + MAXFIYLIK', icon: Image },
-            { title: 'PDF', mods: 'MATN + METADATA + SEZGIR MA\'LUMOT', icon: FileText },
-            { title: 'HUJJAT', mods: 'MATN + SEZGIR MA\'LUMOT + METADATA', icon: File },
+            { title: 'Rasm', mods: 'Rasm ichidagi matn, QR-kod, qo\'shimcha ma\'lumotlar, maxfiylik tahlili', icon: Image },
+            { title: 'PDF', mods: 'Matn, qo\'shimcha ma\'lumotlar, sezgir ma\'lumotlar, maxfiylik tahlili', icon: FileText },
+            { title: 'Matn hujjati', mods: 'Matn, sezgir ma\'lumotlar, qo\'shimcha ma\'lumotlar', icon: File },
           ].map((card) => {
             const Icon = card.icon;
             return (

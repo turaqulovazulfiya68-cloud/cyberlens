@@ -9,15 +9,15 @@ interface ScanningViewProps {
 }
 
 const SCAN_STEPS: ScanStep[] = [
-  { id: '1', label: 'Fayl turi aniqlanmoqda', status: 'pending' },
-  { id: '2', label: 'Ma\'lumotlar ajratilmoqda', status: 'pending' },
-  { id: '3', label: 'Matn tekshirilmoqda', status: 'pending' },
-  { id: '4', label: 'Sezgir ma\'lumotlar aniqlanmoqda', status: 'pending' },
-  { id: '5', label: 'QR-kod tekshirilmoqda', status: 'pending' },
-  { id: '6', label: 'Metadata tekshirilmoqda', status: 'pending' },
-  { id: '7', label: 'Bog\'liqliklar tahlil qilinmoqda', status: 'pending' },
-  { id: '8', label: 'Xavf baholanmoqda', status: 'pending' },
-  { id: '9', label: 'Himoya tavsiyalari tayyorlanmoqda', status: 'pending' },
+  { id: '1', label: 'Fayl turini aniqlayapmiz', status: 'pending' },
+  { id: '2', label: 'Fayl ichidagi ma\'lumotlarni ajratayapmiz', status: 'pending' },
+  { id: '3', label: 'Matnni tekshiryapmiz', status: 'pending' },
+  { id: '4', label: 'Shaxsiy ma\'lumotlarni qidiryapmiz', status: 'pending' },
+  { id: '5', label: 'QR-kodni tekshiryapmiz', status: 'pending' },
+  { id: '6', label: 'Fayl ichidagi qo\'shimcha ma\'lumotlarni tekshiryapmiz', status: 'pending' },
+  { id: '7', label: 'Topilgan ma\'lumotlarning bog\'liqligini tahlil qilyapmiz', status: 'pending' },
+  { id: '8', label: 'Bu ma\'lumotlar siz uchun qanchalik xavf tug\'dirishini baholayapmiz', status: 'pending' },
+  { id: '9', label: 'Himoya tavsiyalarini tayyorlayapmiz', status: 'pending' },
 ];
 
 const STEP_ICONS = [FileSearch, ScanLine, ScanLine, ShieldAlert, Radar, FileSearch, Link2, BrainCircuit, ShieldAlert];
@@ -58,7 +58,7 @@ export function ScanningView({ fileName, fileType, onComplete }: ScanningViewPro
         {/* Header */}
         <div className="text-center mb-8 animate-fade-in-up">
           <h1 className="font-display font-black text-3xl sm:text-5xl text-cyber-cyan text-glow-cyan mb-3">
-            AVTOMATIK SKANERLASH
+            Faylingizni tekshiryapmiz...
           </h1>
           <p className="text-gray-400 text-sm">
             {fileName} · {fileType}
@@ -70,7 +70,7 @@ export function ScanningView({ fileName, fileType, onComplete }: ScanningViewPro
           {/* Progress bar */}
           <div className="mb-8">
             <div className="flex items-center justify-between mb-2">
-              <span className="font-mono text-xs text-cyber-cyan">SKANERLASH DARAJASI</span>
+              <span className="font-mono text-xs text-cyber-cyan">Tekshirish davom etmoqda</span>
               <span className="font-display font-black text-3xl text-cyber-cyan text-glow-cyan">
                 {progress}%
               </span>
@@ -161,7 +161,7 @@ export function ScanningView({ fileName, fileType, onComplete }: ScanningViewPro
                     <span className="font-mono text-xs text-cyber-cyan/50 animate-blink">...</span>
                   )}
                   {step.status === 'done' && (
-                    <span className="font-mono text-xs text-cyber-green">DONE</span>
+                    <span className="font-mono text-xs text-cyber-green">tayyor</span>
                   )}
                 </div>
               );
@@ -186,7 +186,7 @@ export function ScanningView({ fileName, fileType, onComplete }: ScanningViewPro
                 <span className="text-cyber-cyan">$ </span>
                 {step.status === 'done' ? 'OK ' : '... '}
                 {step.label}...
-                {step.status === 'done' && <span className="text-cyber-green"> [DONE]</span>}
+                {step.status === 'done' && <span className="text-cyber-green"> [tayyor]</span>}
               </div>
             ))}
             <div className="text-cyber-cyan">

@@ -139,10 +139,10 @@ function App() {
       <footer className="relative z-10 border-t border-cyber-cyan/10 mt-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-xs text-gray-600 font-mono">
-            CYBERLENS · ULASHISHDAN OLDINGI XAVFSIZLIK NAZORATI
+            CyberLens · Faylni ulashishdan oldin xavfsizlikni tekshiring
           </p>
           <p className="text-xs text-gray-700 font-mono">
-            Prototip v1.0 · Heuristik baholash · 100% aniqlik da'vo qilinmaydi
+            Prototip v1.0 · Taxminiy baholash · 100% aniqlik kafolatlanmaydi
           </p>
         </div>
       </footer>
