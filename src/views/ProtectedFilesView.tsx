@@ -1,11 +1,12 @@
-import { Lock, Eye, Download, RotateCw, FileText, ShieldCheck } from 'lucide-react';
+import { Lock, Eye, Download, RotateCw, FileText, ShieldCheck, ChevronDown } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
-import type { ScanRecord } from '@/types';
+import type { ScanRecord, AppStage } from '@/types';
 
 export function ProtectedFilesView() {
   const [records, setRecords] = useState<ScanRecord[]>([]);
   const [loading, setLoading] = useState(true);
+  const [expanded, setExpanded] = useState<string | null>(null);
 
   useEffect(() => {
     loadProtectedFiles();
@@ -63,7 +64,7 @@ export function ProtectedFilesView() {
                   </div>
                   <div className="min-w-0 flex-1">
                     <p className="text-white text-sm font-mono truncate">{record.file_name}</p>
-                    <p className="text-gray-500 text-xs">{new Date(record.created_at || record.date).toLocaleDateString('uz-UZ')}</p>
+                    <p className="text-gray-500 text-xs">{new Date(record.created_at ?? record.date ?? Date.now()).toLocaleDateString('uz-UZ')}</p>
                   </div>
                 </div>
 
@@ -93,19 +94,56 @@ export function ProtectedFilesView() {
 
                 {/* Actions */}
                 <div className="flex gap-2">
-                  <button className="flex-1 py-2 text-xs font-mono text-cyber-cyan border border-cyber-cyan/30 rounded hover:bg-cyber-cyan/10 transition-all flex items-center gap-1 justify-center">
+                  <button
+                    onClick={() => setExpanded(expanded === record.id ? null : record.id)}
+                    className="flex-1 py-2 text-xs font-mono text-cyber-cyan border border-cyber-cyan/30 rounded hover:bg-cyber-cyan/10 transition-all flex items-center gap-1 justify-center"
+                  >
                     <Eye className="w-3 h-3" />
                     Ko'rish
+                    <ChevronDown className={`w-3 h-3 transition-transform ${expanded === record.id ? 'rotate-180' : ''}`} />
                   </button>
-                  <button className="flex-1 py-2 text-xs font-mono text-cyber-blue border border-cyber-blue/30 rounded hover:bg-cyber-blue/10 transition-all flex items-center gap-1 justify-center">
+                  <button
+                    onClick={() => {
+                      const lines = [
+                        'CyberLens — Himoyalangan fayl hisoboti',
+                        `Fayl: ${record.file_name}`,
+                        `Sana: ${new Date(record.created_at ?? record.date ?? Date.now()).toLocaleString('uz-UZ')}`,
+                        `Xavf: ${record.risk_score}/100 → himoyalangan: ${record.protected_risk_score}/100`,
+                        `Yashirilgan topilmalar: ${record.protected_findings_count}/${record.findings_count}`,
+                      ];
+                      const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
+                      const url = URL.createObjectURL(blob);
+                      const a = document.createElement('a');
+                      a.href = url;
+                      a.download = `cyberlens_${record.file_name}_himoya.txt`;
+                      a.click();
+                      setTimeout(() => URL.revokeObjectURL(url), 2000);
+                    }}
+                    className="flex-1 py-2 text-xs font-mono text-cyber-blue border border-cyber-blue/30 rounded hover:bg-cyber-blue/10 transition-all flex items-center gap-1 justify-center"
+                  >
                     <Download className="w-3 h-3" />
-                    Yuklab olish
+                    Hisobot
                   </button>
-                  <button className="flex-1 py-2 text-xs font-mono text-cyber-amber border border-cyber-amber/30 rounded hover:bg-cyber-amber/10 transition-all flex items-center gap-1 justify-center">
+                  <button
+                    onClick={() => window.dispatchEvent(new CustomEvent('cyberlens:navigate', { detail: 'yuklash' as AppStage }))}
+                    className="flex-1 py-2 text-xs font-mono text-cyber-amber border border-cyber-amber/30 rounded hover:bg-cyber-amber/10 transition-all flex items-center gap-1 justify-center"
+                  >
                     <RotateCw className="w-3 h-3" />
-                    Tekshir
+                    Qayta tekshir
                   </button>
                 </div>
+
+                {expanded === record.id && (
+                  <div className="mt-3 pt-3 border-t border-gray-800 space-y-1 animate-fade-in">
+                    {record.file_hash && (
+                      <p className="text-[11px] text-gray-500 font-mono break-all">SHA-256: {record.file_hash}</p>
+                    )}
+                    <p className="text-[11px] text-gray-500 font-mono">Holat: {record.status}</p>
+                    <p className="text-[11px] text-gray-600 font-mono">
+                      Eslatma: faylning o'zi saqlanmaydi — faqat himoya natijalari ko'rsatiladi.
+                    </p>
+                  </div>
+                )}
               </div>
             ))}
           </div>

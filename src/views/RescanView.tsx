@@ -10,13 +10,12 @@ interface RescanViewProps {
 }
 
 const RESCAN_STEPS = [
-  'Himoyalangan fayl qayta yuklanmoqda',
-  'Oldingi xavfli ma\'lumotlar tekshirilmoqda',
-  'Shaxsiy ma\'lumotlar qayta qidirilmoqda',
-  'QR-kod qayta tekshirilmoqda',
-  'Fayl ichidagi qo\'shimcha ma\'lumotlar qayta tekshirilmoqda',
+  'Himoya holati qayta o\'qilmoqda',
+  'Yashirilgan topilmalar ro\'yxati tekshirilmoqda',
+  'Qolgan topilmalar qayta baholanmoqda',
   'Ma\'lumotlar bog\'liqligi qayta tahlil qilinmoqda',
-  'Yangi xavf darajasi baholanmoqda',
+  'Yangi xavf darajasi hisoblanmoqda',
+  'Yakuniy hisobot tayyorlanmoqda',
 ];
 
 export function RescanView({ result, onNavigate, onScanComplete }: RescanViewProps) {

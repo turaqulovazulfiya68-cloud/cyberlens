@@ -24,6 +24,16 @@ import { supabase } from '@/lib/supabase';
 
 const WORKFLOW_STAGES: AppStage[] = ['yuklash', 'skanerlash', 'natija', 'himoya', 'qayta-tekshirish'];
 
+const HISTORY_KEY = 'cyberlens_history_enabled';
+
+function historyEnabled(): boolean {
+  try {
+    return localStorage.getItem(HISTORY_KEY) !== '0';
+  } catch {
+    return true;
+  }
+}
+
 function App() {
   const [stage, setStage] = useState<AppStage>('bosh-sahifa');
   const [file, setFile] = useState<File | null>(null);
@@ -82,6 +92,7 @@ function App() {
   }, []);
 
   const saveToHistory = useCallback(async (r: AnalysisResult, status: string) => {
+    if (!historyEnabled()) return;
     const { error } = await supabase.from('scan_history').insert({
       file_name: r.fileName,
       file_type: r.fileType,

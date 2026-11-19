@@ -141,7 +141,7 @@ function calculateRisk(findings: Finding[], relationships: RelationshipLink[]) {
 }
 
 export async function analyzeFile(file: File, fileId: string, scanResult?: FullScanResult): Promise<AnalysisResult> {
-  const full = scanResult ?? await import('./scanner').then((m) => m.scanFile(file));
+  const full: FullScanResult = scanResult ?? await import('./scanner').then((m) => m.scanFile(file));
   const { scan, text } = full;
 
   const fileType = detectFileTypeFromFormat(scan.detectedFormat, scan.claimedExtension);

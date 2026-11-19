@@ -13,7 +13,7 @@ const PATTERNS: PiiPattern[] = [
   {
     type: 'telefon',
     label: 'Telefon raqami',
-    regex: /(\+?998[\s\-]?\(?\d{2}\)?[\s\-]?\d{3}[\s\-]?\d{2}[\s\-]?\d{2})|(\+?\d{1,3}[\s\-]?\(?\d{2,3}\)?[\s\-]?\d{3}[\s\-]?\d{2}[\s\-]?\d{2})/g,
+    regex: /(\+?998[\s-]?\(?\d{2}\)?[\s-]?\d{3}[\s-]?\d{2}[\s-]?\d{2})|(\+?\d{1,3}[\s-]?\(?\d{2,3}\)?[\s-]?\d{3}[\s-]?\d{2}[\s-]?\d{2})/g,
     sensitivity: 75,
     validate: (v) => v.replace(/\D/g, '').length >= 9,
   },
