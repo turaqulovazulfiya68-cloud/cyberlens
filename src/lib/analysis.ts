@@ -1,346 +1,106 @@
-import type { Finding, FindingType, FindingCategory, AnalysisResult, RelationshipLink } from '@/types';
+import type { Finding, FindingType, FindingCategory, AnalysisResult, RelationshipLink, PiiFinding } from '@/types';
+import type { FullScanResult } from './scanner';
+import { detectPii, maskValue } from './pii';
+import { detectFileTypeFromFormat } from './fileType';
 
-// Heuristic sensitive-data patterns
-const PATTERNS: { type: FindingType; category: FindingCategory; label: string; regex: RegExp; sensitivity: number; openness: number; impact: number; description: string; riskExplanation: string; recommendation: string; protectionAction: string }[] = [
-  {
-    type: 'telefon',
-    category: 'aloqa',
-    label: 'Telefon raqami',
-    regex: /(\+?\d{1,3}[\s.-]?)?\(?\d{2,3}\)?[\s.-]?\d{2,3}[\s.-]?\d{2,3}[\s.-]?\d{2,3}/g,
-    sensitivity: 75,
-    openness: 80,
-    impact: 70,
+// Heuristic sensitive-data patterns (used for findings derived from real extracted text)
+const FINDING_META: Record<string, { sensitivity: number; openness: number; impact: number; category: FindingCategory; description: string; riskExplanation: string; recommendation: string; protectionAction: string }> = {
+  'telefon': {
+    sensitivity: 75, openness: 80, impact: 70, category: 'aloqa',
     description: "Faylingizda telefon raqamingiz ko'rinib turibdi.",
-    riskExplanation: "Telefon raqami o'z-alone kam xavf tug'diradi. Lekin agar u ism va universitet ma'lumoti bilan birga bo'lsa, sizni topishni ancha osonlashtiradi.",
-    recommendation: "Ulashishdan oldin telefon raqamingizni yashirishni tavsiya qilamiz. Masalan, +998 ** *** ** 45 ko'rinishida.",
+    riskExplanation: "Telefon raqami o'zi kam xavf tug'diradi. Lekin agar u ism va tashkilot ma'lumoti bilan birga bo'lsa, sizni topishni ancha osonlashtiradi.",
+    recommendation: "Ulashishdan oldin telefon raqamingizni yashirishni tavsiya qilamiz.",
     protectionAction: "Telefon raqamini yashirish",
   },
-  {
-    type: 'email',
-    category: 'aloqa',
-    label: 'Elektron pochta',
-    regex: /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g,
-    sensitivity: 70,
-    openness: 85,
-    impact: 65,
+  'email': {
+    sensitivity: 70, openness: 85, impact: 65, category: 'aloqa',
     description: "Faylingizda elektron pochta manzilingiz ko'rinib turibdi.",
-    riskExplanation: "Email manzili sizning shaxsingizni aniqlash uchun ishlatilishi mumkin. Agar u boshqa ma'lumotlar bilan birga bo'lsa, bu yanada oson bo'ladi.",
-    recommendation: "Email manzilingizni qisman yashirishni tavsiya qilamiz. Masalan, z***@gmail.com ko'rinishida.",
+    riskExplanation: "Email manzili sizning shaxsingizni aniqlash uchun ishlatilishi mumkin.",
+    recommendation: "Email manzilingizni qisman yashirishni tavsiya qilamiz.",
     protectionAction: "Email manzilini yashirish",
   },
-  {
-    type: 'jshshir',
-    category: 'shaxs',
-    label: 'JShShIR (PINFL)',
-    regex: /\b\d{14}\b/g,
-    sensitivity: 98,
-    openness: 90,
-    impact: 95,
+  'jshshir': {
+    sensitivity: 98, openness: 90, impact: 95, category: 'shaxs',
     description: "Faylingizda JShShIR (shaxsiy raqamingiz) bor. Bu juda sezgir ma'lumot.",
-    riskExplanation: "JShShIR sizni butunlay noyob tarzda aniqlaydi. Agar bu raqam begona qo'liga o'tib qolsa, siz nomidan turib turli xizmatlardan foydalanish mumkin.",
+    riskExplanation: "JShShIR sizni butunlay noyob tarzda aniqlaydi.",
     recommendation: "Bu raqamni fayldan butunlay olib tashlashni qat'iy tavsiya qilamiz.",
     protectionAction: "JShShIR raqamini olib tashlash",
   },
-  {
-    type: 'iban',
-    category: 'raqamli-kirish',
-    label: 'Bank IBAN raqami',
-    regex: /\b[AZ]{2}\d{2}[A-Z0-9]{4}\d{10}\b/gi,
-    sensitivity: 92,
-    openness: 75,
-    impact: 90,
-    description: "Faylingizda bank hisobingiz raqami (IBAN) ko'rinib turibdi.",
-    riskExplanation: "Bank raqami moliyaviy ma'lumotlaringizga kirish imkonini berishi mumkin. Buni ulashish juda xavfli.",
+  'iban': {
+    sensitivity: 92, openness: 75, impact: 90, category: 'raqamli-kirish',
+    description: "Faylingizda bank hisobingiz raqami ko'rinib turibdi.",
+    riskExplanation: "Bank raqami moliyaviy ma'lumotlaringizga kirish imkonini berishi mumkin.",
     recommendation: "Bank raqamini fayldan butunlay olib tashlashni qat'iy tavsiya qilamiz.",
     protectionAction: "Bank raqamini olib tashlash",
   },
-  {
-    type: 'parol',
-    category: 'raqamli-kirish',
-    label: 'Parol / kalit so\'z',
-    regex: /(?:parol|password|pwd|pass|kalit)[:\s=]+\S+/gi,
-    sensitivity: 99,
-    openness: 60,
-    impact: 98,
+  'karta': {
+    sensitivity: 95, openness: 75, impact: 92, category: 'raqamli-kirish',
+    description: "Faylingizda bank karta raqami ko'rinib turibdi.",
+    riskExplanation: "Karta raqami bilan begona shaxs to'lov qilishi mumkin.",
+    recommendation: "Karta raqamini fayldan butunlay olib tashlashni qat'iy tavsiya qilamiz.",
+    protectionAction: "Karta raqamini olib tashlash",
+  },
+  'parol': {
+    sensitivity: 99, openness: 60, impact: 98, category: 'raqamli-kirish',
     description: "Faylingizda parol yoki kalit so'z bor. Bu juda xavfli.",
     riskExplanation: "Agar parol begona qo'liga o'tsa, sizning hisoblaringizga kirib olish mumkin.",
     recommendation: "Parolni fayldan darhol olib tashlashni qat'iy tavsiya qilamiz.",
     protectionAction: "Parolni olib tashlash",
   },
-  {
-    type: 'tugilgan-sana',
-    category: 'shaxs',
-    label: 'Tug\'ilgan sana',
-    regex: /\b(\d{1,2}[.\/-]\d{1,2}[.\/-]\d{2,4})\b/g,
-    sensitivity: 65,
-    openness: 70,
-    impact: 60,
+  'api-kalit': {
+    sensitivity: 97, openness: 60, impact: 95, category: 'raqamli-kirish',
+    description: "Faylingizda API kalit yoki maxfiy token bor.",
+    riskExplanation: "API kalit orqali sizning hisobingizdan foydalanib resurs sarflashi mumkin.",
+    recommendation: "Kalitni fayldan olib tashlab, yangisini yarating.",
+    protectionAction: "API kalitini olib tashlash",
+  },
+  'passport': {
+    sensitivity: 90, openness: 85, impact: 88, category: 'hujjat',
+    description: "Faylingizda pasport yoki shaxs hujjati raqami ko'rinib turibdi.",
+    riskExplanation: "Pasport raqami shaxsingizni tasdiqlashda ishlatilishi mumkin.",
+    recommendation: "Pasport raqamini yashirishni tavsiya qilamiz.",
+    protectionAction: "Pasport raqamini yashirish",
+  },
+  'tugilgan-sana': {
+    sensitivity: 65, openness: 70, impact: 60, category: 'shaxs',
     description: "Faylingizda tug'ilgan sanangiz ko'rinib turibdi.",
-    riskExplanation: "Tug'ilgan sana o'z-alone katta xavf emas, lekin ism bilan birgalikda sizni aniqlashda ishlatilishi mumkin.",
+    riskExplanation: "Tug'ilgan sana o'zi katta xavf emas, lekin ism bilan birgalikda sizni aniqlashda ishlatilishi mumkin.",
     recommendation: "Tug'ilgan sanani yashirishni tavsiya qilamiz.",
     protectionAction: "Tug'ilgan sanani yashirish",
   },
-];
+  'manzil': {
+    sensitivity: 80, openness: 75, impact: 78, category: 'joylashuv',
+    description: "Faylingizda uy manzili ko'rinib turibdi.",
+    riskExplanation: "Uy manzili sizning jismoniy joylashuvingizni oshkor qiladi.",
+    recommendation: "Manzilni umumlashtirishni tavsiya qilamiz (faqat shahar nomini qoldiring).",
+    protectionAction: "Manzilni yashirish",
+  },
+  'ism': {
+    sensitivity: 55, openness: 75, impact: 50, category: 'shaxs',
+    description: "Faylingizda to'liq ism ko'rinib turibdi.",
+    riskExplanation: "Ism o'zi katta xavf emas. Lekin agar u telefon raqami yoki tashkilot bilan birga bo'lsa, sizni aniqlash ancha oson bo'ladi.",
+    recommendation: "Ismni qisqartirishni tavsiya qilamiz. Masalan, faqat bosh harflarni qoldiring.",
+    protectionAction: "Ismni qisqartirish",
+  },
+};
 
-const UZBEK_NAMES = ['Zulfiya', 'Akmal', 'Dilshod', 'Feruza', 'Jasur', 'Kamola', 'Bekzod', 'Madina', 'Sardor', 'Nilufar', 'Aziz', 'Shahnoza'];
-const UZBEK_SURNAMES = ['Karimova', 'Rahimov', 'Yusupova', 'Toshmatov', 'Ergasheva', 'Saidov', 'Kamilova', 'Bozorov'];
-const UNIVERSITIES = ["Toshkent Davlat Universiteti", "Toshkent Axborot Texnologiyalari Universiteti", "Samarqand Davlat Universiteti", "Toshkent Tibbiyot Akademiyasi", "Mirzo Ulug'bek nomidagi"];
-const WORKPLACES = ["UzTelekom", "Humans Bank", "UzAuto Motors", "EPAM Systems", "TBC Bank", "Anor Bank"];
-
-export function detectFileType(file: File): 'rasm' | 'pdf' | 'hujjat' | 'noma-lum' {
-  const mime = file.type;
-  const name = file.name.toLowerCase();
-  if (mime.startsWith('image/')) return 'rasm';
-  if (mime === 'application/pdf' || name.endsWith('.pdf')) return 'pdf';
-  if (
-    mime.includes('word') ||
-    mime.includes('officedocument') ||
-    mime.includes('text') ||
-    name.endsWith('.docx') ||
-    name.endsWith('.doc') ||
-    name.endsWith('.txt') ||
-    name.endsWith('.rtf')
-  )
-    return 'hujjat';
-  return 'noma-lum';
-}
-
-export function getAnalysisModules(fileType: 'rasm' | 'pdf' | 'hujjat' | 'noma-lum'): string[] {
-  switch (fileType) {
-    case 'rasm':
-      return ['Rasm ichidagi matn', 'QR-kod', 'Qo\'shimcha ma\'lumotlar', 'Maxfiylik tahlili'];
-    case 'pdf':
-      return ['Matn', 'Qo\'shimcha ma\'lumotlar', 'Sezgir ma\'lumotlar', 'Maxfiylik tahlili'];
-    case 'hujjat':
-      return ['Matn', 'Sezgir ma\'lumotlar', 'Qo\'shimcha ma\'lumotlar'];
-    default:
-      return ['Matn', 'Qo\'shimcha ma\'lumotlar', 'Maxfiylik tahlili'];
-  }
-}
-
-async function extractTextFromFile(file: File): Promise<string> {
-  try {
-    if (file.type.startsWith('image/')) {
-      // In a real app, OCR would run here (Tesseract.js). For the prototype, we simulate
-      // extracting text from images by generating plausible content based on the filename.
-      return simulateImageOCR(file.name);
-    }
-    if (file.type === 'application/pdf') {
-      // PDF text extraction would use pdf.js here. For the prototype, we simulate.
-      return simulatePDFText(file.name);
-    }
-    if (file.type.startsWith('text/') || file.name.endsWith('.txt')) {
-      return await file.text();
-    }
-    // DOCX and other binary formats: simulate extraction
-    return simulateDocText(file.name);
-  } catch {
-    return simulateDocText(file.name);
-  }
-}
-
-function simulateImageOCR(fileName: string): string {
-  const name = fileName.replace(/\.[^.]+$/, '');
-  const rnd = Math.random;
-  const name2 = UZBEK_NAMES[Math.floor(rnd() * UZBEK_NAMES.length)];
-  const surname = UZBEK_SURNAMES[Math.floor(rnd() * UZBEK_SURNAMES.length)];
-  const uni = UNIVERSITIES[Math.floor(rnd() * UNIVERSITIES.length)];
-  const phone = `+998 ${Math.floor(90 + rnd() * 9)} ${Math.floor(100 + rnd() * 899)} ${Math.floor(10 + rnd() * 89)} ${Math.floor(10 + rnd() * 89)}`;
-  const email = `${name2.toLowerCase()}.${surname.toLowerCase().replace(/['']/g, '')}@gmail.com`;
-  const birthDate = `${Math.floor(1 + rnd() * 28).toString().padStart(2, '0')}.${Math.floor(1 + rnd() * 12).toString().padStart(2, '0')}.${1990 + Math.floor(rnd() * 15)}`;
-
-  return `${name2} ${surname}\nTel: ${phone}\nEmail: ${email}\n${uni}\nTug'ilgan: ${birthDate}\n`;
-}
-
-function simulatePDFText(fileName: string): string {
-  const rnd = Math.random;
-  const name2 = UZBEK_NAMES[Math.floor(rnd() * UZBEK_NAMES.length)];
-  const surname = UZBEK_SURNAMES[Math.floor(rnd() * UZBEK_SURNAMES.length)];
-  const uni = UNIVERSITIES[Math.floor(rnd() * UNIVERSITIES.length)];
-  const workplace = WORKPLACES[Math.floor(rnd() * WORKPLACES.length)];
-  const phone = `+998 ${Math.floor(90 + rnd() * 9)} ${Math.floor(100 + rnd() * 899)} ${Math.floor(10 + rnd() * 89)} ${Math.floor(10 + rnd() * 89)}`;
-  const email = `${name2.toLowerCase()}.${surname.toLowerCase().replace(/['']/g, '')}@gmail.com`;
-  const birthDate = `${Math.floor(1 + rnd() * 28).toString().padStart(2, '0')}.${Math.floor(1 + rnd() * 12).toString().padStart(2, '0')}.${1990 + Math.floor(rnd() * 15)}`;
-  const jshshir = `${Math.floor(10000000000000 + rnd() * 89999999999999)}`;
-
-  return `ARIZA\nF.I.O: ${name2} ${surname}\nTug'ilgan sana: ${birthDate}\nJShShIR: ${jshshir}\nTelefon: ${phone}\nEmail: ${email}\nTashkilot: ${uni}\nIsh joyi: ${workplace}\n`;
-}
-
-function simulateDocText(fileName: string): string {
-  const rnd = Math.random;
-  const name2 = UZBEK_NAMES[Math.floor(rnd() * UZBEK_NAMES.length)];
-  const surname = UZBEK_SURNAMES[Math.floor(rnd() * UZBEK_SURNAMES.length)];
-  const uni = UNIVERSITIES[Math.floor(rnd() * UNIVERSITIES.length)];
-  const phone = `+998 ${Math.floor(90 + rnd() * 9)} ${Math.floor(100 + rnd() * 899)} ${Math.floor(10 + rnd() * 89)} ${Math.floor(10 + rnd() * 89)}`;
-  const email = `${name2.toLowerCase()}.${surname.toLowerCase().replace(/['']/g, '')}@gmail.com`;
-  return `Rezyume\n${name2} ${surname}\n${uni}\nTelefon: ${phone}\nEmail: ${email}\n`;
-}
-
-function extractMetadata(file: File): Finding[] {
-  const findings: Finding[] = [];
-  const lastModified = new Date(file.lastModified);
-  findings.push({
-    id: 'meta-device',
-    type: 'metadata',
-    category: 'raqamli-kirish',
-    label: 'Fayl ichidagi qo\'shimcha ma\'lumotlar',
-    value: `${file.type || 'noma-lum'} | ${file.size} bayt | ${lastModified.toISOString().split('T')[0]}`,
-    location: 'Fayl ichida saqlanib qolgan qo\'shimcha maydonlar',
-    sensitivity: 45,
-    openness: 60,
-    impact: 40,
-    description: "Fayl ichida qurilma va sana haqida qo'shimcha ma'lumotlar saqlanib qolgan.",
-    riskExplanation: "Bu qo'shimcha ma'lumotlar fayl qaysi qurilmada va qachon yaratilganini oshkor qilishi mumkin.",
-    recommendation: "Ulashishdan oldin bu qo'shimcha ma'lumotlarni tozalashni tavsiya qilamiz.",
-    protectionAction: "Qo'shimcha ma'lumotlarni tozalash",
-  });
-
-  if (file.type.startsWith('image/')) {
-    findings.push({
-      id: 'meta-gps',
-      type: 'metadata',
-      category: 'joylashuv',
-      label: 'Joylashuv ma\'lumoti',
-      value: '41.2995° N, 69.2401° E (Toshkent)',
-      location: 'Rasm ichida saqlanib qolgan joylashuv ma\'lumoti',
-      sensitivity: 80,
-      openness: 70,
-      impact: 75,
-      description: "Rasmingiz ichida sizning aniq joylashuvingiz haqida ma'lumot saqlanib qolgan.",
-      riskExplanation: "Bu ma'lumot siz qayerda ekanligingizni begonalarga oshkor qilishi mumkin.",
-      recommendation: "Ulashishdan oldin rasmdagi joylashuv ma'lumotini olib tashlashni tavsiya qilamiz.",
-      protectionAction: "Joylashuv ma'lumotini olib tashlash",
-    });
-  }
-
-  return findings;
-}
-
-function detectQRCode(fileType: string): Finding[] {
-  if (fileType !== 'rasm') return [];
-  const rnd = Math.random;
-  const hasQR = rnd() > 0.4;
-  if (!hasQR) return [];
-
-  const qrContents = [
-    'https://t.me/zulfiya_karimova',
-    'https://wa.me/998901234567',
-    'WIFI:T:WPA;S:HomeWiFi;P:secret123;;',
-    'https://tuit.uz/student/profile/12345',
-  ];
-  const content = qrContents[Math.floor(rnd() * qrContents.length)];
-
-  return [{
-    id: 'qr-code',
-    type: 'qr-kod',
-    category: 'raqamli-kirish',
-    label: 'QR-kod',
-    value: content,
-    location: 'Rasmning markazida QR-kod topildi',
-    sensitivity: 85,
-    openness: 95,
-    impact: 80,
-    description: "Faylingizda QR-kod bor.",
-    riskExplanation: "QR-kod qo'shimcha ma'lumotlarga olib borishi mumkin. Agar bu kod sizning shaxsiy sahifangizga bog'langan bo'lsa, begona odam siz haqingizda ko'proq ma'lumot olishi mumkin.",
-    recommendation: "Ulashishdan oldin QR-kodni olib tashlashni yoki xiralashtirishni tavsiya qilamiz.",
-    protectionAction: "QR-kodni olib tashlash",
-  }];
-}
-
-function detectNamesInText(text: string): Finding[] {
-  const findings: Finding[] = [];
-  // Detect Uzbek-style names (Capitalized word + Capitalized word)
-  const nameRegex = /\b([A-ZÖÜÇŞĞNGa-zöüçşğň]{3,})\s+([A-ZÖÜÇŞĞNGa-zöüçşğň]{4,})\b/g;
-  let match;
-  const seen = new Set<string>();
-  while ((match = nameRegex.exec(text)) !== null) {
-    const fullName = `${match[1]} ${match[2]}`;
-    if (seen.has(fullName)) continue;
-    seen.add(fullName);
-    // Filter out common non-name bigrams
-    if (/^(ARIZA|Rezyume|Tug|Tel|Email|Ish|JSh|Tashkilot|F\.I|ARIZA)/.test(match[1])) continue;
-    findings.push({
-      id: `name-${fullName}`,
-      type: 'ism',
-      category: 'shaxs',
-      label: 'To\'liq ism',
-      value: fullName,
-      location: 'Fayl ichidagi matnda',
-      sensitivity: 55,
-      openness: 75,
-      impact: 50,
-      description: `Faylingizda to'liq ism ko'rinib turibdi: ${fullName}`,
-      riskExplanation: "Ism o'z-alone katta xavf emas. Lekin agar u telefon raqami yoki universitet bilan birga bo'lsa, sizni aniqlash ancha oson bo'ladi.",
-      recommendation: "Ismni qisqartirishni tavsiya qilamiz. Masalan, faqat bosh harflarni qoldiring.",
-      protectionAction: "Ismni qisqartirish",
-    });
-    break; // Only detect one name
-  }
-  return findings;
-}
-
-function detectOrganizations(text: string): Finding[] {
-  const findings: Finding[] = [];
-  for (const uni of UNIVERSITIES) {
-    if (text.includes(uni)) {
-      findings.push({
-        id: `org-${uni}`,
-        type: 'universitet',
-        category: 'tashkilot',
-        label: 'Universitet yoki tashkilot',
-        value: uni,
-        location: 'Fayl ichidagi matnda',
-        sensitivity: 50,
-        openness: 65,
-        impact: 45,
-        description: `Faylingizda tashkilot nomi ko'rinib turibdi: ${uni}`,
-        riskExplanation: "Universitet ma'lumoti o'z-alone xavfli emas. Lekin agar u ism va telefon bilan birga bo'lsa, siz haqingizda to'liqroq ma'lumot olish mumkin.",
-        recommendation: "Tashkilot nomini umumlashtirishni tavsiya qilamiz. Masalan, 'universitet' deb yozing.",
-        protectionAction: "Tashkilot nomini umumlashtirish",
-      });
-      break;
-    }
-  }
-  for (const wp of WORKPLACES) {
-    if (text.includes(wp)) {
-      findings.push({
-        id: `work-${wp}`,
-        type: 'ish-joyi',
-        category: 'tashkilot',
-        label: 'Ish joyi',
-        value: wp,
-        location: 'Fayl ichidagi matnda',
-        sensitivity: 55,
-        openness: 65,
-        impact: 50,
-        description: `Faylingizda ish joyingiz nomi ko'rinib turibdi: ${wp}`,
-        riskExplanation: "Ish joyi ma'lumoti sizni aniqlashni osonlashtirishi mumkin.",
-        recommendation: "Ish joyi nomini umumlashtirishni tavsiya qilamiz.",
-        protectionAction: "Ish joyini umumlashtirish",
-      });
-      break;
-    }
-  }
-  return findings;
+function piiTypeToFindingType(piiType: string): FindingType {
+  const map: Record<string, FindingType> = {
+    'telefon': 'telefon', 'email': 'email', 'jshshir': 'jshshir', 'iban': 'iban',
+    'karta': 'karta', 'parol': 'parol', 'api-kalit': 'api-kalit', 'passport': 'passport',
+    'manzil': 'manzil', 'ism': 'ism',
+  };
+  return map[piiType] ?? 'ism';
 }
 
 function buildRelationships(findings: Finding[]): RelationshipLink[] {
   const links: RelationshipLink[] = [];
   const ids = findings.map((f) => f.id);
   for (let i = 0; i < ids.length - 1; i++) {
-    links.push({
-      from: ids[i],
-      to: ids[i + 1],
-      label: 'bog\'liq',
-    });
+    links.push({ from: ids[i], to: ids[i + 1], label: 'bog\'liq' });
   }
-  // Also link first and last for circular visualization
   if (ids.length > 2) {
-    links.push({
-      from: ids[ids.length - 1],
-      to: ids[0],
-      label: 'profil',
-    });
+    links.push({ from: ids[ids.length - 1], to: ids[0], label: 'profil' });
   }
   return links;
 }
@@ -359,7 +119,6 @@ function calculateRisk(findings: Finding[], relationships: RelationshipLink[]) {
   const avgImpact = findings.reduce((s, f) => s + f.impact, 0) / findings.length;
   const linkage = Math.min(100, relationships.length * 15 + findings.length * 5);
 
-  // Prototype heuristic: RISK = SENSITIVITY × OPENNESS × LINKAGE × IMPACT (normalized to 0-100)
   const raw = (avgSensitivity / 100) * (avgOpenness / 100) * (linkage / 100) * (avgImpact / 100);
   const riskScore = Math.round(Math.pow(raw, 0.5) * 100);
 
@@ -381,72 +140,81 @@ function calculateRisk(findings: Finding[], relationships: RelationshipLink[]) {
   };
 }
 
-export async function analyzeFile(file: File, fileId: string): Promise<AnalysisResult> {
-  const fileType = detectFileType(file);
-  const text = await extractTextFromFile(file);
+export async function analyzeFile(file: File, fileId: string, scanResult?: FullScanResult): Promise<AnalysisResult> {
+  const full = scanResult ?? await import('./scanner').then((m) => m.scanFile(file));
+  const { scan, text } = full;
+
+  const fileType = detectFileTypeFromFormat(scan.detectedFormat, scan.claimedExtension);
 
   const findings: Finding[] = [];
 
-  // Pattern-based detection
-  for (const pattern of PATTERNS) {
-    const matches = text.match(pattern.regex);
-    if (matches) {
-      for (const match of matches.slice(0, 1)) {
-        findings.push({
-          id: `${pattern.type}-${match.substring(0, 10)}`,
-          type: pattern.type,
-          category: pattern.category,
-          label: pattern.label,
-          value: match.trim(),
-          location: 'Fayl ichidagi matnda',
-          sensitivity: pattern.sensitivity,
-          openness: pattern.openness,
-          impact: pattern.impact,
-          description: pattern.description,
-          riskExplanation: pattern.riskExplanation,
-          recommendation: pattern.recommendation,
-          protected: false,
-          protectionAction: pattern.protectionAction,
-        });
-      }
+  // Real PII findings from extracted text only
+  if (text) {
+    const piiFindings = detectPii(text);
+    const byType = new Map<string, PiiFinding>();
+    for (const p of piiFindings) {
+      const existing = byType.get(p.type);
+      if (!existing || p.sensitivity > existing.sensitivity) byType.set(p.type, p);
+    }
+    for (const p of byType.values()) {
+      const meta = FINDING_META[p.type];
+      if (!meta) continue;
+      findings.push({
+        id: `pii-${p.type}`,
+        type: piiTypeToFindingType(p.type),
+        category: meta.category,
+        label: p.label,
+        value: p.masked,
+        location: 'Fayl ichidagi matnda',
+        sensitivity: meta.sensitivity,
+        openness: meta.openness,
+        impact: meta.impact,
+        description: meta.description,
+        riskExplanation: meta.riskExplanation,
+        recommendation: meta.recommendation,
+        protected: false,
+        protectionAction: meta.protectionAction,
+      });
     }
   }
 
-  // Name detection
-  findings.push(...detectNamesInText(text));
-  // Organization detection
-  findings.push(...detectOrganizations(text));
-  // Metadata detection
-  findings.push(...extractMetadata(file));
-  // QR code detection (simulated for images)
-  findings.push(...detectQRCode(fileType));
-
-  // Deduplicate by type (keep highest sensitivity)
-  const byType = new Map<string, Finding>();
-  for (const f of findings) {
-    const existing = byType.get(f.type);
-    if (!existing || f.sensitivity > existing.sensitivity) {
-      byType.set(f.type, f);
-    }
+  // File-scan reasons surfaced as security findings
+  for (const r of scan.reasons) {
+    if (r.severity === 'info' || r.severity === 'past') continue;
+    findings.push({
+      id: `scan-${r.id}`,
+      type: 'metadata',
+      category: 'raqamli-kirish',
+      label: r.label,
+      value: r.detail,
+      location: 'Fayl strukturaviy tahlili',
+      sensitivity: r.severity === 'kritik' ? 100 : r.severity === 'yuqori' ? 80 : 60,
+      openness: 50,
+      impact: r.severity === 'kritik' ? 100 : r.severity === 'yuqori' ? 80 : 55,
+      description: r.detail,
+      riskExplanation: r.detail,
+      recommendation: scan.recommendations[0] ?? 'Faylni ishonchli manbadan tekshiring.',
+      protected: false,
+      protectionAction: 'Fayl tarkibini tekshirish',
+    });
   }
-  const uniqueFindings = Array.from(byType.values());
 
-  const relationships = buildRelationships(uniqueFindings);
-  const risk = calculateRisk(uniqueFindings, relationships);
+  const relationships = buildRelationships(findings);
+  const risk = calculateRisk(findings, relationships);
 
   const detectedTypeLabel: Record<string, string> = {
     'rasm': 'Rasm (JPEG/PNG)',
     'pdf': 'PDF hujjat',
     'hujjat': 'Matn hujjati (DOCX/TXT)',
-    'noma-lum': 'Noma\'lum format',
+    'noma-lum': "Noma'lum format",
   };
 
   return {
     fileId,
     fileName: file.name,
     fileType,
-    detectedType: detectedTypeLabel[fileType],
-    findings: uniqueFindings,
+    detectedType: scan.detectedFormat,
+    findings,
     relationships,
     riskScore: risk.riskScore,
     riskLevel: risk.riskLevel,
@@ -454,8 +222,11 @@ export async function analyzeFile(file: File, fileId: string): Promise<AnalysisR
     protectedFindings: [],
     protectedRiskScore: risk.riskScore,
     protectedRiskLevel: risk.riskLevel,
+    scan,
   };
 }
+
+export { maskValue };
 
 export function generateDemoFile(): File {
   const content = `ARIZA
@@ -466,9 +237,9 @@ Telefon: +998 90 123 45 67
 Email: zulfiya.karimova@gmail.com
 Tashkilot: Toshkent Axborot Texnologiyalari Universiteti
 Ish joyi: EPAM Systems
+Manzil: Toshkent shahar, Yunusobod tumani, Amir Temur ko'chasi 15-uy
 Parol: mySecretPass2024`;
-  const blob = new Blob([content], { type: 'application/pdf' });
-  return new File([blob], 'ariza_zulfiya.pdf', { type: 'application/pdf' });
+  return new File([content], 'ariza_zulfiya.txt', { type: 'text/plain' });
 }
 
 export function applyProtection(result: AnalysisResult, protectedIds: string[]): AnalysisResult {
@@ -505,10 +276,10 @@ export function getCategoryColor(category: FindingCategory): string {
 export function getCategoryLabel(category: FindingCategory): string {
   const labels: Record<FindingCategory, string> = {
     'shaxs': 'Siz haqingizda',
-    'aloqa': 'Aloqa ma\'lumotlari',
+    'aloqa': "Aloqa ma'lumotlari",
     'tashkilot': 'Tashkilot',
     'joylashuv': 'Joylashuv',
-    'raqamli-kirish': 'Raqamli ma\'lumotlar',
+    'raqamli-kirish': "Raqamli ma'lumotlar",
     'hujjat': 'Hujjat',
   };
   return labels[category];
