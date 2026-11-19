@@ -77,13 +77,6 @@ export function analyzePassword(pw: string): PasswordCheck {
   if (patterns.length >= 3) score = Math.min(score, 1) as 0 | 1;
 
   const verdictMap = ['juda-zaif', 'zaif', 'orta', 'kuchli', 'juda-kuchli'] as const;
-  const verdictLabels: Record<PasswordCheck['verdict'], string> = {
-    'juda-zaif': 'Juda zaif',
-    'zaif': 'Zaif',
-    'orta': "O'rtacha",
-    'kuchli': 'Kuchli',
-    'juda-kuchli': 'Juda kuchli',
-  };
 
   const suggestions: string[] = [];
   if (pw.length < 12) suggestions.push('Uzunlikni kamida 12 belgiga olib chiqing');

@@ -77,7 +77,7 @@ function parseExif(bytes: Uint8Array): MetadataField[] {
     const readU16 = (p: number) => dv.getUint16(p, le);
     const readU32 = (p: number) => dv.getUint32(p, le);
 
-    let ifd = tiff + readU32(tiff + 4);
+    let ifd: number = tiff + readU32(tiff + 4);
     const gpsValues: string[] = [];
     const visited = new Set<number>();
     const ifds: number[] = [ifd];
@@ -102,7 +102,7 @@ function parseExif(bytes: Uint8Array): MetadataField[] {
         const typeSizes = [0, 1, 1, 2, 4, 8, 1, 1, 2, 4, 8, 4, 8];
         const size = typeSizes[type] ?? 1;
         const total = size * num;
-        let p = total <= 4 ? valOff : tiff + readU32(valOff);
+        const p = total <= 4 ? valOff : tiff + readU32(valOff);
         let value = '';
         if (type === 2) {
           const chunks: string[] = [];

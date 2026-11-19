@@ -202,13 +202,6 @@ export async function analyzeFile(file: File, fileId: string, scanResult?: FullS
   const relationships = buildRelationships(findings);
   const risk = calculateRisk(findings, relationships);
 
-  const detectedTypeLabel: Record<string, string> = {
-    'rasm': 'Rasm (JPEG/PNG)',
-    'pdf': 'PDF hujjat',
-    'hujjat': 'Matn hujjati (DOCX/TXT)',
-    'noma-lum': "Noma'lum format",
-  };
-
   return {
     fileId,
     fileName: file.name,

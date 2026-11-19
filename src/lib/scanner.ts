@@ -1,5 +1,5 @@
 import type { FileScanResult, ScanReason, ScanVerdict, ScanConfidence, ReasonSeverity } from '@/types';
-import { detectSignature, getExtension, sha256Hex, isUtf8Decodable, looksLikeText, readZipEntries, scanPdf, hasEicarSignature } from './binary';
+import { detectSignature, getExtension, sha256Hex, looksLikeText, readZipEntries, scanPdf, hasEicarSignature } from './binary';
 
 const MAX_SIZE = 50 * 1024 * 1024;
 
@@ -9,13 +9,13 @@ function addReason(reasons: ScanReason[], id: string, label: string, detail: str
   reasons.push({ id, label, detail, weight, severity });
 }
 
-function finalize(reasons: ScanReason[], canAnalyze: boolean): ScoredReasons {
+function finalize(reasons: ScanReason[]): ScoredReasons {
   const score = Math.min(100, reasons.reduce((s, r) => s + r.weight, 0));
   return { reasons, score };
 }
 
-function pickVerdict(score: number, reasons: ScanReason[], canAnalyze: boolean): ScanVerdict {
-  if (!canAnalyze) return 'UNKNOWN';
+function pickVerdict(score: number, reasons: ScanReason[], analyzed: boolean): ScanVerdict {
+  if (!analyzed) return 'UNKNOWN';
   if (reasons.some((r) => r.severity === 'kritik')) return 'MALICIOUS';
   if (reasons.some((r) => r.severity === 'yuqori')) return 'SUSPICIOUS';
   if (score >= 25) return 'SUSPICIOUS';
@@ -247,7 +247,6 @@ async function extractZipText(bytes: Uint8Array): Promise<string | null> {
 
 async function inflateEntry(bytes: Uint8Array, targetName: string): Promise<string | null> {
   try {
-    const entries = readZipEntries(bytes);
     const dv = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
     let eocd = -1;
     for (let i = bytes.length - 22; i >= Math.max(0, bytes.length - 22 - 65536); i--) {
@@ -262,7 +261,6 @@ async function inflateEntry(bytes: Uint8Array, targetName: string): Promise<stri
       const nameLen = dv.getUint16(ptr + 28, true);
       const extraLen = dv.getUint16(ptr + 30, true);
       const commentLen = dv.getUint16(ptr + 32, true);
-      const localExtraLen = dv.getUint16(ptr + 42, true); // not used here
       const name = new TextDecoder().decode(bytes.subarray(ptr + 46, ptr + 46 + nameLen));
       if (name === targetName) {
         // Local header: 30 bytes + name + extra

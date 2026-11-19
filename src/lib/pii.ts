@@ -63,7 +63,7 @@ const PATTERNS: PiiPattern[] = [
   {
     type: 'api-kalit',
     label: 'Maxfiy kalit (secret key)',
-    regex: /(?:api[_-]?key|secret|token)\s*[:=]\s*['"]?([A-Za-z0-9_\-]{16,})['"]?/gi,
+    regex: /(?:api[_-]?key|secret|token)\s*[:=]\s*['"]?([A-Za-z0-9_-]{16,})['"]?/gi,
     sensitivity: 96,
   },
 ];
@@ -107,7 +107,7 @@ export function detectNames(text: string): string[] {
 
 export function detectAddresses(text: string): string[] {
   const out: string[] = [];
-  const re = /\b(?:shahar|tuman|viloyat|ko'?cha|k\\u00f6cha|mahalla|uy|dom|kv|ofis)\b[^.,;\n]{4,80}/gi;
+  const re = /\b(?:shahar|tuman|viloyat|ko'?cha|mahalla|uy|dom|kv|ofis)\b[^.,;\n]{4,80}/gi;
   let m: RegExpExecArray | null;
   while ((m = re.exec(text)) !== null) {
     out.push(m[0].trim());
