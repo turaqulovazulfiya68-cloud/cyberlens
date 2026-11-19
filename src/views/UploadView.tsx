@@ -1,13 +1,18 @@
+import { extensionToFileType } from '@/lib/fileType';
 import { useState, useRef, useCallback } from 'react';
 import { UploadCloud, FileSearch, Play, AlertCircle, FileText, Image, File } from 'lucide-react';
 import type { AppStage } from '@/types';
-import { detectFileType, getAnalysisModules } from '@/lib/analysis';
+import { getAnalysisModules } from '@/lib/fileType';
+import { getExtension } from '@/lib/binary';
 
 interface UploadViewProps {
   onFileSelected: (file: File) => void;
   onDemoMode: () => void;
   onNavigate: (stage: AppStage) => void;
 }
+
+const MAX_SIZE = 50 * 1024 * 1024;
+const DANGEROUS_NAME_RE = /[\\/\0]|\.\./;
 
 export function UploadView({ onFileSelected, onDemoMode }: UploadViewProps) {
   const [isDragging, setIsDragging] = useState(false);
@@ -17,6 +22,14 @@ export function UploadView({ onFileSelected, onDemoMode }: UploadViewProps) {
 
   const handleFile = useCallback((file: File) => {
     setError(null);
+    if (file.size > MAX_SIZE) {
+      setError('Fayl hajmi 50 MB dan katta. Kichikroq fayl tanlang.');
+      return;
+    }
+    if (DANGEROUS_NAME_RE.test(file.name)) {
+      setError("Fayl nomida yo'l belgilari bor. Bunday fayl qabul qilinmaydi.");
+      return;
+    }
     setDetectedFile(file);
   }, []);
 
@@ -47,7 +60,7 @@ export function UploadView({ onFileSelected, onDemoMode }: UploadViewProps) {
     }
   };
 
-  const fileType = detectedFile ? detectFileType(detectedFile) : null;
+  const fileType = detectedFile ? extensionToFileType(getExtension(detectedFile.name)) : null;
   const modules = fileType ? getAnalysisModules(fileType) : [];
 
   const fileTypeIcon = detectedFile ? (

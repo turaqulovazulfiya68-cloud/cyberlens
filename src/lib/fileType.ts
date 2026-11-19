@@ -17,6 +17,10 @@ export function detectFileType(file: File): AppFileType {
   return detectFileTypeFromFormat('', file.name.split('.').pop()?.toLowerCase() ?? '');
 }
 
+export function extensionToFileType(ext: string): AppFileType {
+  return detectFileTypeFromFormat('', ext);
+}
+
 export function getAnalysisModules(fileType: AppFileType): string[] {
   switch (fileType) {
     case 'rasm':

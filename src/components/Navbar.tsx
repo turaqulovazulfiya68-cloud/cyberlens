@@ -1,4 +1,4 @@
-import { Shield, Eye, FileSearch, History, Settings, Lock, Radar, Menu, X } from 'lucide-react';
+import { Shield, Eye, FileSearch, History, Settings, Lock, Radar, Menu, X, LayoutDashboard, ShieldCheck, Droplets, KeyRound, Globe } from 'lucide-react';
 import type { AppStage } from '@/types';
 import { useState } from 'react';
 
@@ -10,6 +10,11 @@ interface NavbarProps {
 const NAV_ITEMS: { stage: AppStage; label: string; icon: typeof Shield }[] = [
   { stage: 'bosh-sahifa', label: 'Bosh sahifa', icon: Shield },
   { stage: 'yuklash', label: 'Tekshirish', icon: FileSearch },
+  { stage: 'dashboard', label: 'Panel', icon: LayoutDashboard },
+  { stage: 'maxfiylik', label: 'Maxfiylik', icon: ShieldCheck },
+  { stage: 'oqish', label: 'Oqish qalqoni', icon: Droplets },
+  { stage: 'parol', label: 'Parollar', icon: KeyRound },
+  { stage: 'sayt', label: 'Sayt tekshiruvi', icon: Globe },
   { stage: 'tarix', label: 'Tarix', icon: History },
   { stage: 'himoyalangan-fayllar', label: 'Himoyalangan fayllar', icon: Lock },
   { stage: 'vizion', label: 'Kelajak', icon: Eye },

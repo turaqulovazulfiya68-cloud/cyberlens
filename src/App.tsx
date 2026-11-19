@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import type { AppStage, AnalysisResult } from '@/types';
 import { CyberBackground } from '@/components/CyberBackground';
 import { Navbar } from '@/components/Navbar';
@@ -13,7 +13,13 @@ import { HistoryView } from '@/views/HistoryView';
 import { ProtectedFilesView } from '@/views/ProtectedFilesView';
 import { SettingsView } from '@/views/SettingsView';
 import { VisionView } from '@/views/VisionView';
-import { analyzeFile, detectFileType, generateDemoFile } from '@/lib/analysis';
+import { DashboardView } from '@/views/DashboardView';
+import { PrivacyGuardianView } from '@/views/PrivacyGuardianView';
+import { LeakageShieldView } from '@/views/LeakageShieldView';
+import { PasswordCenterView } from '@/views/PasswordCenterView';
+import { SiteCheckerView } from '@/views/SiteCheckerView';
+import { analyzeFile, generateDemoFile } from '@/lib/analysis';
+import { scanFile } from '@/lib/scanner';
 import { supabase } from '@/lib/supabase';
 
 const WORKFLOW_STAGES: AppStage[] = ['yuklash', 'skanerlash', 'natija', 'himoya', 'qayta-tekshirish'];
@@ -29,14 +35,29 @@ function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
+  // Cross-view navigation (e.g. dashboard → history)
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const target = (e as CustomEvent<AppStage>).detail;
+      if (target) navigate(target);
+    };
+    window.addEventListener('cyberlens:navigate', handler);
+    return () => window.removeEventListener('cyberlens:navigate', handler);
+  }, [navigate]);
+
   const handleFileSelected = useCallback(async (selectedFile: File) => {
     setFile(selectedFile);
+    setResult(null);
     setStage('skanerlash');
     setScanning(true);
 
     const fileId = crypto.randomUUID();
     try {
-      const analysisResult = await analyzeFile(selectedFile, fileId);
+      const full = await scanFile(selectedFile);
+      // Drop the raw bytes/text reference as soon as analysis is done (data minimization)
+      const analysisResult = await analyzeFile(selectedFile, fileId, full);
+      full.text = null;
+      full.bytes.fill(0);
       setResult(analysisResult);
     } catch (err) {
       console.error('Analysis failed:', err);
@@ -61,10 +82,16 @@ function App() {
   }, []);
 
   const saveToHistory = useCallback(async (r: AnalysisResult, status: string) => {
-    const fileType = detectFileType(file || new File([], r.fileName));
     const { error } = await supabase.from('scan_history').insert({
       file_name: r.fileName,
-      file_type: fileType,
+      file_type: r.fileType,
+      file_hash: r.scan.sha256,
+      file_size: r.scan.fileSize,
+      verdict: r.scan.verdict,
+      confidence: r.scan.confidence,
+      reasons: r.scan.reasons,
+      av_status: r.scan.avStatus,
+      privacy_risks: r.findings.filter((f) => f.id.startsWith('pii-')).length,
       risk_score: r.riskScore,
       risk_level: r.riskLevel,
       protected_risk_score: r.protectedRiskScore,
@@ -74,7 +101,7 @@ function App() {
       status,
     });
     if (error) console.error('Failed to save scan history:', error);
-  }, [file]);
+  }, []);
 
   const handleRescanComplete = useCallback(() => {
     if (result) {
@@ -131,6 +158,11 @@ function App() {
         )}
         {stage === 'tarix' && <HistoryView />}
         {stage === 'himoyalangan-fayllar' && <ProtectedFilesView />}
+        {stage === 'dashboard' && <DashboardView />}
+        {stage === 'maxfiylik' && <PrivacyGuardianView />}
+        {stage === 'oqish' && <LeakageShieldView />}
+        {stage === 'parol' && <PasswordCenterView />}
+        {stage === 'sayt' && <SiteCheckerView />}
         {stage === 'sozlamalar' && <SettingsView />}
         {stage === 'vizion' && <VisionView />}
       </div>

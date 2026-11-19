@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
-import { ShieldAlert, MapPin, Eye, Link2, Lightbulb, ChevronRight, Lock, Filter } from 'lucide-react';
-import type { AnalysisResult, Finding, FindingCategory, AppStage } from '@/types';
+import { ShieldAlert, MapPin, Eye, Link2, Lightbulb, ChevronRight, Lock, Filter, ShieldCheck, AlertTriangle, HelpCircle, Hash, ShieldQuestion } from 'lucide-react';
+import type { AnalysisResult, Finding, FindingCategory, AppStage, ScanVerdict } from '@/types';
 import { RiskGauge } from '@/components/RiskGauge';
 import { RadarChart } from '@/components/RadarChart';
 import { RelationshipNetwork } from '@/components/RelationshipNetwork';
@@ -23,10 +23,19 @@ const CATEGORY_ICONS: Record<FindingCategory, typeof ShieldAlert> = {
 // Need to import FileSearch
 import { FileSearch } from 'lucide-react';
 
+const VERDICT_META: Record<ScanVerdict, { label: string; color: string; icon: typeof ShieldCheck; desc: string }> = {
+  SAFE: { label: 'XAVFSIZ', color: '#00ff88', icon: ShieldCheck, desc: 'Mavjud tekshiruvlarda shubhali belgi topilmadi.' },
+  SUSPICIOUS: { label: 'SHUBHALI', color: '#ffaa00', icon: AlertTriangle, desc: 'Bir yoki bir nechta shubhali belgi aniqlandi.' },
+  MALICIOUS: { label: 'ZARARLI', color: '#ff2d55', icon: ShieldAlert, desc: 'Yaxshi maʼlum boʻlgan zararli imzo yoki ishonchli detekt aniqlandi.' },
+  UNKNOWN: { label: 'ANIQLENMAGAN', color: '#1a7fff', icon: HelpCircle, desc: 'Faylni yetarli darajada tahlil qilib boʻlmadi.' },
+};
+
 export function ResultsView({ result, onNavigate }: ResultsViewProps) {
   const [selectedCategory, setSelectedCategory] = useState<FindingCategory | null>(null);
   const [selectedFinding, setSelectedFinding] = useState<Finding | null>(null);
   const [showRiskExplanation, setShowRiskExplanation] = useState(false);
+  const scan = result.scan;
+  const verdictMeta = VERDICT_META[scan.verdict];
 
   const categories: FindingCategory[] = ['shaxs', 'aloqa', 'tashkilot', 'joylashuv', 'raqamli-kirish', 'hujjat'];
 
@@ -60,16 +69,94 @@ export function ResultsView({ result, onNavigate }: ResultsViewProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-6 animate-fade-in-up">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyber-green/10 border border-cyber-green/30 mb-3">
-            <ShieldAlert className="w-4 h-4 text-cyber-green" />
-            <span className="font-mono text-xs text-cyber-green font-bold">Tekshiruv yakunlandi</span>
+          <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full mb-3`} style={{ background: `${verdictMeta.color}10`, border: `1px solid ${verdictMeta.color}40` }}>
+            <verdictMeta.icon className="w-4 h-4" style={{ color: verdictMeta.color }} />
+            <span className="font-mono text-xs font-bold" style={{ color: verdictMeta.color }}>
+              {verdictMeta.label} · ISHONCH: {scan.confidence.toUpperCase()}
+            </span>
           </div>
           <h1 className="font-display font-black text-3xl sm:text-4xl text-white mb-2">
-            Biz nima topdik
+            Tekshiruv yakuni
           </h1>
           <p className="text-gray-400 text-sm">
             {result.fileName} · {result.detectedType}
           </p>
+        </div>
+
+        {/* File scan verdict panel */}
+        <div className="glass-panel rounded-xl p-6 mb-8" style={{ borderColor: `${verdictMeta.color}40` }}>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-4">
+            <div className="w-14 h-14 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: `${verdictMeta.color}15`, border: `1px solid ${verdictMeta.color}40` }}>
+              <verdictMeta.icon className="w-7 h-7" style={{ color: verdictMeta.color }} />
+            </div>
+            <div className="flex-1">
+              <p className="font-display font-bold text-2xl" style={{ color: verdictMeta.color }}>
+                {verdictMeta.label}
+              </p>
+              <p className="text-gray-400 text-sm">{verdictMeta.desc}</p>
+            </div>
+            <div className="text-right">
+              <p className="font-mono text-[10px] text-gray-600">Xavf balli</p>
+              <p className="font-display font-bold text-2xl" style={{ color: verdictMeta.color }}>{scan.score}/100</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+            {[
+              { label: 'Fayl formati', value: scan.detectedFormat },
+              { label: 'Hajm', value: `${(scan.fileSize / 1024).toFixed(1)} KB` },
+              { label: 'Tekshirilgan sana', value: new Date(scan.scanDate).toLocaleString('uz-UZ') },
+              { label: 'Imzo mosligi', value: scan.signatureMatch ? 'Mos' : 'Mos emas' },
+            ].map((item) => (
+              <div key={item.label} className="bg-cyber-navy/50 rounded p-3 border border-cyber-cyan/10">
+                <p className="font-mono text-[9px] text-gray-600 mb-1">{item.label}</p>
+                <p className="text-xs text-white font-mono break-all">{item.value}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="bg-cyber-black/50 rounded p-3 mb-4 border border-cyber-cyan/10 terminal-text">
+            <p className="text-xs text-cyber-cyan flex items-center gap-2 break-all">
+              <Hash className="w-3 h-3 flex-shrink-0" />
+              SHA-256: {scan.sha256}
+            </p>
+          </div>
+
+          <div className="flex items-start gap-2 p-3 bg-cyber-amber/5 border border-cyber-amber/20 rounded mb-4">
+            <ShieldQuestion className="w-4 h-4 text-cyber-amber flex-shrink-0 mt-0.5" />
+            <p className="text-xs text-cyber-amber">{scan.avStatus}</p>
+          </div>
+
+          <p className="font-mono text-xs text-cyber-cyan mb-2">Tasnif asoslari:</p>
+          <div className="space-y-2 mb-4">
+            {scan.reasons.length === 0 ? (
+              <p className="text-xs text-gray-500">Hech qanday shubhali belgi topilmadi.</p>
+            ) : (
+              scan.reasons.map((r) => (
+                <div key={r.id} className="flex items-start gap-2 p-2 bg-cyber-navy/40 rounded">
+                  <div className="w-1.5 h-1.5 rounded-full flex-shrink-0 mt-1.5" style={{ background: r.severity === 'kritik' ? '#ff2d55' : r.severity === 'yuqori' ? '#ffaa00' : r.severity === 'orta' ? '#ffaa00' : '#666' }} />
+                  <div>
+                    <p className="text-xs text-white font-medium">{r.label}</p>
+                    <p className="text-[11px] text-gray-500">{r.detail}</p>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+
+          {scan.recommendations.length > 0 && (
+            <>
+              <p className="font-mono text-xs text-cyber-cyan mb-2">Tavsiya etilgan xavfsizlik choralar:</p>
+              <ul className="space-y-1">
+                {scan.recommendations.map((rec, i) => (
+                  <li key={i} className="text-xs text-gray-400 flex items-start gap-2">
+                    <ChevronRight className="w-3 h-3 text-cyber-cyan flex-shrink-0 mt-0.5" />
+                    {rec}
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
         </div>
 
         {/* Risk score + gauge */}

@@ -1,5 +1,16 @@
 import { useState } from 'react';
-import { Settings, Eye, Database, Bell, Trash2, Globe, Lock } from 'lucide-react';
+import { Settings, Eye, Database, Bell, Trash2, Globe, Lock, ShieldCheck } from 'lucide-react';
+
+const HISTORY_KEY = 'cyberlens_history_enabled';
+
+function readHistoryPref(): boolean {
+  try {
+    const v = localStorage.getItem(HISTORY_KEY);
+    return v === null ? true : v === '1';
+  } catch {
+    return true;
+  }
+}
 
 interface ToggleProps {
   label: string;
@@ -37,6 +48,16 @@ function Toggle({ label, description, defaultOn = false, icon: Icon }: TogglePro
 
 export function SettingsView() {
   const [language, setLanguage] = useState('uz');
+  const [historyOn, setHistoryOn] = useState(readHistoryPref);
+
+  const setHistory = (on: boolean) => {
+    setHistoryOn(on);
+    try {
+      localStorage.setItem(HISTORY_KEY, on ? '1' : '0');
+    } catch {
+      // localStorage unavailable: preference applies to this session only
+    }
+  };
 
   return (
     <div className="relative min-h-screen pt-24 pb-12">
@@ -57,10 +78,22 @@ export function SettingsView() {
             <h2 className="font-mono text-xs text-cyber-cyan mb-2">Maxfiylik</h2>
             <Toggle
               label="Maxfiylik rejimi"
-              description="Fayllaringiz shu kompyuteringizda qayta ishlanadi, hech qayerga yuborilmaydi"
+              description="Fayllaringiz faqat shu brauzerda qayta ishlanadi, hech qayerga yuborilmaydi"
               defaultOn={true}
               icon={Lock}
             />
+            <div className="mt-2 glass-panel rounded-lg p-4 border-cyber-green/20">
+              <div className="flex items-start gap-3">
+                <ShieldCheck className="w-5 h-5 text-cyber-green flex-shrink-0 mt-0.5" />
+                <div className="text-xs text-gray-400 leading-relaxed">
+                  <p className="text-cyber-green font-medium mb-1">Qanday ma'lumot qayerda ishlanadi:</p>
+                  <p>• Fayl mazmuni — faqat shu brauzerda o'qiladi, internetga chiqmaydi, saqlanmaydi.</p>
+                  <p>• Parollar va matn tahlili — to'liq qurilmangizda, hech qanday uzatishsiz.</p>
+                  <p>• Tekshiruv tarixi (fayl nomi, xesh, xulq) — faqat siz yuborgan ma'lumot saqlanadi, Supabase bazasida.</p>
+                  <p>• Faylning o'zi hech qachon yuklanmaydi va saqlanmaydi.</p>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* File storage */}
@@ -68,8 +101,12 @@ export function SettingsView() {
             <h2 className="font-mono text-xs text-cyber-cyan mb-2">Fayllarni saqlash</h2>
             <Toggle
               label="Tekshiruv tarixini saqlash"
-              description="Tekshiruv natijalarini saqlab borish"
-              defaultOn={true}
+              description={
+                historyOn
+                  ? "Yoqilgan: fayl nomi, xesh va natija Supabase bulutida saqlanadi (fayl mazmuni emas)"
+                  : "O'chirilgan: yangi tekshiruvlar tarixga yozilmaydi"
+              }
+              defaultOn={historyOn}
               icon={Database}
             />
             <div className="mt-2">
