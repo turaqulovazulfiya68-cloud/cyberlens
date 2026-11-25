@@ -175,7 +175,7 @@ export async function scanFile(file: File): Promise<FullScanResult> {
   if (!canAnalyze || (detectedFormat === null && bytes.length === 0)) {
     canAnalyze = false;
   }
-  const { score } = finalize(reasons, canAnalyze);
+  const { score } = finalize(reasons);
   const verdict = pickVerdict(score, reasons, canAnalyze && detectedFormat !== null);
   const confidence = pickConfidence(reasons, analysisCoverage, canAnalyze);
 
